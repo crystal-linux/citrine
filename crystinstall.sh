@@ -133,5 +133,6 @@ else
 fi
 
 arch-chroot /mnt /continue.sh
+rm /mnt/continue.sh
 
 reboot
