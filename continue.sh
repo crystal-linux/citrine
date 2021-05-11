@@ -84,7 +84,7 @@ grub-mkconfig -o /boot/grub/grub.cfg
 systemctl enable NetworkManager
 
 pacman-key --init
-pacman-key --import archlinux
+pacman-key --populate archlinux
 
 printf "Would you like to install a DE profile? (y/N): "
 read DEP
