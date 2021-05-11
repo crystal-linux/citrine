@@ -1,72 +1,86 @@
 #!/bin/bash
 
+inf() {
+    echo -e "\e[1m♠ $@\e[0m"
+}
+
+err() {
+    echo -e "\e[1m\e[31m✗ $@\e[0m"
+}
+
+response=""
+prompt() {
+    printf "\e[1m\e[33m$@ : \e[0m"
+    read response
+}
+
 TZ="/usr/share/zoneinfo/FUCK/OFF"
 
 while [[ ! -f $TZ ]]; do
-    printf "Pick a time zone (Format: America/New_York , Europe/London, etc): "
-    read PT
+    prompt "Pick a time zone (Format: America/New_York , Europe/London, etc)"
+    PT="$response"
     TZ="/usr/share/zoneinfo/${PT}"
 done
 
 ln -sf $TZ /etc/localtime
-echo "Set TZ to ${TZ}"
-echo "Syncing hardware offset"
+inf "Set TZ to ${TZ}"
+inf "Syncing hardware offset"
 hwclock --systohc
 
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
-printf "Do you need more locales than just en_US? (y/N): "
-read MORE
+prompt "Do you need more locales than just en_US? (y/N)"
+MORE="$response"
 
 if [[ "$MORE" == "y" || "$MORE" == "Y" ]]; then
-    printf "Preferred editor: "
-    read PGRM
+    prompt "Preferred editor"
+    PGRM="$response"
     if [[ -x "$(command -v ${PGRM})" ]]; then
-        echo "Attempting to install ${PGRM}"
+        inf "Attempting to install ${PGRM}"
         pacman -Sy ${PGRM} --noconfirm
     fi
-    echo "When we open the file, please remove the leading # before any locales you need."
-    echo "Then, save and exit.\nPress enter."
+    inf "When we open the file, please remove the leading # before any locales you need."
+    inf "Then, save and exit.\nPress enter."
     read
     ${PGRM} /etc/locale.gen
 fi
 
-echo "Generating selected locales."
+inf "Generating selected locales."
 locale-gen
 
 echo
 echo
-echo "en_US was set as system primary. After install, you can edit /etc/locale.conf to change the primary if desired."
-echo "Press enter"
-read
+inf "en_US was set as system primary. After install, you can edit /etc/locale.conf to change the primary if desired."
+inf "Press enter"
+prompt ""
 
 if [[ -f /keymap ]]; then
-    echo "You set a custom keymap. We're making that change to the new system, too."
+    inf "You set a custom keymap. We're making that change to the new system, too."
     KMP=$(cat /keymap)
     rm /keymap
     echo "KEYMAP=${KMP}" > /etc/vconsole.conf
 fi
 
-printf "System hostname: "
-read HOSTNAME
+prompt "System hostname"
+HOSTNAME="$response"
 echo ${HOSTNAME} > /etc/hostname
 echo "127.0.0.1     localhost" > /etc/hosts
-printf "Would you like IPV6? (y/N)"
-read IPS
+prompt "Would you like IPV6? (y/N)"
+IPS="$response"
 if [[ "$IPS" == "y" || "$IPS" == "Y" ]]; then
     echo "::1       localhost" >> /etc/hosts
 fi
 echo "127.0.1.1       ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
-echo "Password for root"
+inf "Password for root"
 passwd
 
-printf "Your username: "
-read UN
+prompt "Your username"
+UN="$response"
 useradd -m ${UN}
 usermod -aG wheel ${UN}
-echo "Set password for ${UN}"
+inf "Set password for ${UN}"
 passwd ${UN}
 echo >> /etc/sudoers
 echo "# Enabled by Crystalinstall" >> /etc/sudoers
@@ -88,16 +102,16 @@ systemctl enable NetworkManager
 pacman-key --init
 pacman-key --populate archlinux
 
-printf "Would you like to install a DE profile? (y/N): "
-read DEP
+prompt "Would you like to install a DE profile? (y/N)"
+DEP="$response"
 
 if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
-    echo "- KDE"
-    echo "- GNOME"
-    echo "- i3"
-    echo "(We'll add more as people ask)"
-    printf ": "
-    read DE
+    inf "- KDE"
+    inf "- GNOME"
+    inf "- i3"
+    inf "(We'll add more as people ask)"
+    prompt ""
+    DE="$response"
 
     if [[ "$DE" == "KDE" ]]; then
         pacman -Sy --noconfirm plasma kde-applications sddm
@@ -106,19 +120,19 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         pacman -Sy --noconfirm gnome gnome-extra
         DM="gdm"
     elif [[ "$DE" == "i3" ]]; then
-        echo "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference (or not"
-        echo "Press enter"
-        read
+        inf "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference (or not"
+        inf "Press enter"
+        prompt ""
         pacman -Sy i3 xorg-xinit xorg-server
-        printf "Would you like a display manager? If so, provide the package name: "
-        read ND
+        prompt "Would you like a display manager? If so, provide the package name"
+        ND="$response"
         if [[ "$ND" != "" ]]; then
-            echo "Ok, we'll install $ND"
+            inf "Ok, we'll install $ND"
             DM="$ND"
             pacman -Sy --noconfirm $DM
         else
-            echo "Ok, not installing a display manager."
-            echo "We're setting up a default .xinitrc for you, though"
+            inf "Ok, not installing a display manager."
+            inf "We're setting up a default .xinitrc for you, though"
             echo "exec i3" > /home/${UN}/.xinitrc
             chown $UN:$UN /home/${UN}/.xinitrc
             chmod +x /home/${UN}/.xinitrc
@@ -127,20 +141,20 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     fi
 
     if [[ "$DM" != "" ]]; then
-        printf "Would you like to enable ${DM} for ${DE}? (Y/n)"
-        read useDM
+        prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
+        useDM="$response"
         if [[ "$useDM" != "n" ]]; then
             systemctl enable ${DM}
         fi
     fi
 fi
 
-printf "Would you like to add more packages? (Y/n): "
-read MP
+prompt "Would you like to add more packages? (Y/n)"
+MP="$response"
 if [[ "$MP" != "n" ]]; then
-    printf "Write package names: "
-    read PKGNS
+    prompt "Write package names"
+    PKGNS="$response"
     pacman -Sy --noconfirm ${PKGNS}
 fi
 
-echo "Installation complete"
+inf "Installation complete"

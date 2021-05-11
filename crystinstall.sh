@@ -1,56 +1,70 @@
 #!/bin/bash
 
+inf() {
+    echo -e "\e[1m♠ $@\e[0m"
+}
+
+err() {
+    echo -e "\e[1m\e[31m✗ $@\e[0m"
+}
+
+response=""
+prompt() {
+    printf "\e[1m\e[33m$@ : \e[0m"
+    read response
+}
+
 if [[ "$EUID" != "0" ]]; then
-    echo "Run as root"
+    err "Run as root"
     exit 1
 fi
 
-printf "Do you need a keyboard layout other than standard US? (y/N): "
-read KBD
+prompt "Do you need a keyboard layout other than standard US? (y/N)"
+KBD="$response"
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
-    echo "We're going to show the list of keymaps in less. Do you know how to exit less? (Y/n): "
-    read UL
+    prompt "We're going to show the list of keymaps in less. Do you know how to exit less? (Y/n)"
+    UL="$response"
     if [[ "$UL" == "n" ]]; then
-        echo "Once we enter less, use arrows to scroll, and q to quit once you've found the right file."
-        echo "Press enter to go"
+        inf "Once we enter less, use arrows to scroll, and q to quit once you've found the right file."
+        inf "Press enter to go"
         read
     fi
     ls /usr/share/kbd/keymaps/**/*.map.gz | less
-    printf "Correct keymap (omit /usr/share/kbd/keymaps and the file extension): "
-    read KMP
+    prompt "Correct keymap (omit /usr/share/kbd/keymaps and the file extension)"
+    KMP="$response"
     loadkeys ${KMP}
 fi
 
 
 fdisk -l | grep Disk | grep sectors --color=never
 
-printf "Would you like to partition manually? (y/N): "
-read PMODE
+prompt "Would you like to partition manually? (y/N)"
+PMODE="$response"
 
 MANUAL="no"
 DISK=""
 if [[ "$PMODE" == "y" ]]; then
     MANUAL="yes"
 else
-    printf "Install target (will be WIPED COMPLETELY): "
-    read DISK
+    prompt "Install target (will be WIPED COMPLETELY)"
+    DISK="$response"
 fi
 
 if [[ $DISK == *"nvme"* ]]; then
-    echo "Seems like this is an NVME disk. Noting"
+    inf "Seems like this is an NVME disk. Noting"
     NVME="yes"
 else
     NVME="no"
 fi
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
-    echo "Seems like this machine was booted with EFI. Noting"
+    inf "Seems like this machine was booted with EFI. Noting"
     EFI="yes"
 else
     EFI="no"
 fi
 
-echo "Setting system clock via network"
+inf "Setting system clock via network"
 timedatectl set-ntp true
 
 if [[ "$MANUAL" == "no" ]]; then
@@ -70,7 +84,7 @@ if [[ "$MANUAL" == "no" ]]; then
             echo
             echo "w"
         ) | fdisk $DISK
-        echo "Partitioned ${DISK} as an EFI volume"
+        inf "Partitioned ${DISK} as an EFI volume"
     else
         (
             echo "o"
@@ -80,47 +94,47 @@ if [[ "$MANUAL" == "no" ]]; then
             echo
             echo "w"
         ) | fdisk $DISK
-        echo "Partitioned ${DISK} as an MBR volume"
+        inf "Partitioned ${DISK} as an MBR volume"
     fi
 
     if [[ "$NVME" == "yes" ]]; then
         if [[ "$EFI" == "yes" ]]; then
-            echo "Initializing ${DISK} as NVME EFI"
+            inf "Initializing ${DISK} as NVME EFI"
             mkfs.vfat ${DISK}p1
             mkfs.ext4 ${DISK}p2
             mount ${DISK}p2 /mnt
             mkdir -p /mnt/efi
             mount ${DISK}p1 /mnt/efi
         else
-            echo "Initializing ${DISK} as NVME MBR"
+            inf "Initializing ${DISK} as NVME MBR"
             mkfs.ext4 ${DISK}p1
             mount ${DISK}p1 /mnt
         fi
     else
         if [[ "$EFI" == "yes" ]]; then
-            echo "Initializing ${DISK} as EFI"
+            inf "Initializing ${DISK} as EFI"
             mkfs.vfat ${DISK}1
             mkfs.ext4 ${DISK}2
             mount ${DISK}2 /mnt
             mkdir -p /mnt/efi
             mount ${DISK}1 /mnt/efi
         else
-            echo "Initializing ${DISK} as MBR"
+            inf "Initializing ${DISK} as MBR"
             mkfs.ext4 ${DISK}1
             mount ${DISK}1 /mnt
         fi
     fi
 else
-    echo "You have chosen manual partitioning."
-    echo "We're going to drop to a shell for you to partition, but first, PLEASE READ these notes."
-    echo "Before you exit the shell, make sure to format and mount a partition for / at /mnt"
+    inf "You have chosen manual partitioning."
+    inf "We're going to drop to a shell for you to partition, but first, PLEASE READ these notes."
+    inf "Before you exit the shell, make sure to format and mount a partition for / at /mnt"
     if [[ "$EFI" == "yes" ]]; then
         mkdir -p /mnt/efi
-        echo "Additionally, since this machine was booted with UEFI, please make sure to make a 200MB or greater partition"
-        echo "of type VFAT and mount it at /mnt/efi"
+        inf "Additionally, since this machine was booted with UEFI, please make sure to make a 200MB or greater partition"
+        inf "of type VFAT and mount it at /mnt/efi"
     else
-        echo "Please give me the full path of the device you're planning to partition (needed for bootloader installation later)"
-        echo "Example: /dev/sda"
+        inf "Please give me the full path of the device you're planning to partition (needed for bootloader installation later)"
+        inf "Example: /dev/sda"
         printf ": "
         read DISK
     fi
@@ -128,21 +142,21 @@ else
     CONFDONE="NOPE"
 
     while [[ "$CONFDONE" == "NOPE" ]]; do
-        echo "Press enter to go to a shell."
+        inf "Press enter to go to a shell."
         read
         bash
-        printf "All set (and partitions mounted?) (y/N): "
-        read STAT
+        prompt "All set (and partitions mounted?) (y/N)"
+        STAT="$response"
         if [[ "$STAT" == "y" ]]; then
             CONFDONE="YEP"
         fi
     done
 fi
 
-echo "Setting up base CrystalUX System"
+inf "Setting up base CrystalUX System"
 pacstrap /mnt base linux linux-firmware networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch
 if [[ "$EFI" == "yes" ]]; then
-    echo "Installing EFI support package"
+    inf "Installing EFI support package"
     pacstrap /mnt efibootmgr
 fi
 
@@ -168,6 +182,6 @@ fi
 arch-chroot /mnt /continue.sh
 rm /mnt/continue.sh
 
-echo "Installation should now be complete. Please press enter to reboot :)"
+inf "Installation should now be complete. Please press enter to reboot :)"
 read
 reboot
