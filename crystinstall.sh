@@ -102,7 +102,7 @@ else
 fi
 
 echo "Setting up base CrystalUX System"
-pacstrap /mnt base linux linux-firmware networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring
+pacstrap /mnt base linux linux-firmware networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch
 if [[ "$EFI" == "yes" ]]; then
     echo "Installing EFI support package"
     pacstrap /mnt efibootmgr
