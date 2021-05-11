@@ -132,6 +132,8 @@ else
     echo ${DISK} > /mnt/diskn
 fi
 
+cp /etc/pacman.conf /mnt/etc/.
+
 arch-chroot /mnt /continue.sh
 rm /mnt/continue.sh
 
