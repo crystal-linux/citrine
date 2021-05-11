@@ -24,8 +24,17 @@ fi
 
 fdisk -l | grep Disk | grep sectors --color=never
 
-printf "Install target (will be WIPED COMPLETELY): "
-read DISK
+printf "Would you like to partition manually? (y/N): "
+read PMODE
+
+MANUAL="no"
+DISK=""
+if [[ "$PMODE" == "y" ]]; then
+    MANUAL="yes"
+else
+    printf "Install target (will be WIPED COMPLETELY): "
+    read DISK
+fi
 
 if [[ $DISK == *"nvme"* ]]; then
     echo "Seems like this is an NVME disk. Noting"
@@ -44,61 +53,80 @@ fi
 echo "Setting system clock via network"
 timedatectl set-ntp true
 
-echo "Partitioning disk"
-if [[ "$EFI" == "yes" ]]; then
-    (
-        echo "g"
-        echo "n"
-        echo
-        echo
-        echo "+200M"
-        echo "t"
-        echo "1"
-        echo "n"
-        echo
-        echo
-        echo
-        echo "w"
-    ) | fdisk $DISK
-    echo "Partitioned ${DISK} as an EFI volume"
-else
-    (
-        echo "o"
-        echo "n"
-        echo 
-        echo
-        echo
-        echo "w"
-    ) | fdisk $DISK
-    echo "Partitioned ${DISK} as an MBR volume"
-fi
+if [[ "$MANUAL" == "no" ]]; then
+    echo "Partitioning disk"
+    if [[ "$EFI" == "yes" ]]; then
+        (
+            echo "g"
+            echo "n"
+            echo
+            echo
+            echo "+200M"
+            echo "t"
+            echo "1"
+            echo "n"
+            echo
+            echo
+            echo
+            echo "w"
+        ) | fdisk $DISK
+        echo "Partitioned ${DISK} as an EFI volume"
+    else
+        (
+            echo "o"
+            echo "n"
+            echo 
+            echo
+            echo
+            echo "w"
+        ) | fdisk $DISK
+        echo "Partitioned ${DISK} as an MBR volume"
+    fi
 
-if [[ "$NVME" == "yes" ]]; then
-    if [[ "$EFI" == "yes" ]]; then
-        echo "Initializing ${DISK} as NVME EFI"
-        mkfs.vfat ${DISK}p1
-        mkfs.ext4 ${DISK}p2
-        mount ${DISK}p2 /mnt
-        mkdir -p /mnt/efi
-        mount ${DISK}p1 /mnt/efi
+    if [[ "$NVME" == "yes" ]]; then
+        if [[ "$EFI" == "yes" ]]; then
+            echo "Initializing ${DISK} as NVME EFI"
+            mkfs.vfat ${DISK}p1
+            mkfs.ext4 ${DISK}p2
+            mount ${DISK}p2 /mnt
+            mkdir -p /mnt/efi
+            mount ${DISK}p1 /mnt/efi
+        else
+            echo "Initializing ${DISK} as NVME MBR"
+            mkfs.ext4 ${DISK}p1
+            mount ${DISK}p1 /mnt
+        fi
     else
-        echo "Initializing ${DISK} as NVME MBR"
-        mkfs.ext4 ${DISK}p1
-        mount ${DISK}p1 /mnt
+        if [[ "$EFI" == "yes" ]]; then
+            echo "Initializing ${DISK} as EFI"
+            mkfs.vfat ${DISK}1
+            mkfs.ext4 ${DISK}2
+            mount ${DISK}2 /mnt
+            mkdir -p /mnt/efi
+            mount ${DISK}1 /mnt/efi
+        else
+            echo "Initializing ${DISK} as MBR"
+            mkfs.ext4 ${DISK}1
+            mount ${DISK}1 /mnt
+        fi
     fi
 else
+    echo "You have chosen manual partitioning."
+    echo "We're going to drop to a shell for you to partition, but first, PLEASE READ these notes."
+    echo "Before you exit the shell, make sure to format and mount a partition for / at /mnt"
     if [[ "$EFI" == "yes" ]]; then
-        echo "Initializing ${DISK} as EFI"
-        mkfs.vfat ${DISK}1
-        mkfs.ext4 ${DISK}2
-        mount ${DISK}2 /mnt
         mkdir -p /mnt/efi
-        mount ${DISK}1 /mnt/efi
+        echo "Additionally, since this machine was booted with UEFI, please make sure to make a 200MB or greater partition"
+        echo "of type VFAT and mount it at /mnt/efi"
     else
-        echo "Initializing ${DISK} as MBR"
-        mkfs.ext4 ${DISK}1
-        mount ${DISK}1 /mnt
+        echo "Please give me the full path of the device you're planning to partition (needed for bootloader installation later)"
+        echo "Example: /dev/sda"
+        printf ": "
+        read DISK
     fi
+    echo "Press enter to go to a shell."
+    read
+    bash
 fi
 
 echo "Setting up base CrystalUX System"
@@ -127,11 +155,9 @@ else
     echo ${DISK} > /mnt/diskn
 fi
 
-# This *should* now be handled by our patches
-# to pacstrap
-#cp /etc/pacman.conf /mnt/etc/.
-
 arch-chroot /mnt /continue.sh
 rm /mnt/continue.sh
 
+echo "Installation should now be complete. Please press enter to reboot :)"
+read
 reboot
