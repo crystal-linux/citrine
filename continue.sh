@@ -35,6 +35,8 @@ fi
 echo "Generating selected locales."
 locale-gen
 
+echo
+echo
 echo "en_US was set as system primary. After install, you can edit /etc/locale.conf to change the primary if desired."
 echo "Press enter"
 read
