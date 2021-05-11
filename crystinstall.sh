@@ -132,7 +132,9 @@ else
     echo ${DISK} > /mnt/diskn
 fi
 
-cp /etc/pacman.conf /mnt/etc/.
+# This *should* now be handled by our patches
+# to pacstrap
+#cp /etc/pacman.conf /mnt/etc/.
 
 arch-chroot /mnt /continue.sh
 rm /mnt/continue.sh
