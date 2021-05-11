@@ -51,7 +51,8 @@ locale-gen
 
 echo
 echo
-inf "en_US was set as system primary. After install, you can edit /etc/locale.conf to change the primary if desired."
+inf "en_US was set as system primary."
+inf "After install, you can edit /etc/locale.conf to change the primary if desired."
 inf "Press enter"
 prompt ""
 
