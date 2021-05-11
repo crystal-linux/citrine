@@ -109,14 +109,19 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         echo "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference (or not"
         echo "Press enter"
         read
-        pacman -Sy --noconfirm i3 xorg-xinit xorg-server
+        pacman -Sy i3 xorg-xinit xorg-server
         printf "Would you like a display manager? If so, provide the package name: "
         read ND
         if [[ "$ND" != "" ]]; then
             echo "Ok, we'll install $ND"
             DM="$ND"
+            pacman -Sy --noconfirm $DM
         else
             echo "Ok, not installing a display manager."
+            echo "We're setting up a default .xinitrc for you, though"
+            echo "exec i3" > /home/${UN}/.xinitrc
+            chown $UN:$UN /home/${UN}/.xinitrc
+            chmod +x /home/${UN}/.xinitrc
             DM=""
         fi
     fi
