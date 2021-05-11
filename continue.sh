@@ -82,8 +82,8 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 systemctl enable NetworkManager
 
-#pacman-key --init
-#pacman-key --import archlinux
+pacman-key --init
+pacman-key --import archlinux
 
 printf "Would you like to install a DE profile? (y/N): "
 read DEP
@@ -118,7 +118,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         fi
     fi
 
-    if [["$DM" != "" ]]; then
+    if [[ "$DM" != "" ]]; then
         printf "Would you like to enable ${DM} for ${DE}? (Y/n)"
         read useDM
         if [[ "$useDM" != "n" ]]; then
