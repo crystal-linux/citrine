@@ -124,9 +124,19 @@ else
         printf ": "
         read DISK
     fi
-    echo "Press enter to go to a shell."
-    read
-    bash
+
+    CONFDONE="NOPE"
+
+    while [[ "$CONFDONE" == "NOPE" ]]; do
+        echo "Press enter to go to a shell."
+        read
+        bash
+        printf "All set (and partitions mounted?) (y/N): "
+        read STAT
+        if [[ "$STAT" == "y" ]]; then
+            CONFDONE="YEP"
+        fi
+    done
 fi
 
 echo "Setting up base CrystalUX System"
