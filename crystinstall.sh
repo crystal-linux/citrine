@@ -108,14 +108,9 @@ if [[ "$EFI" == "yes" ]]; then
     pacstrap /mnt efibootmgr
 fi
 
-# Grub theme & branding kek
-sed -i 's/Arch/CrystalUX/g' /mnt/etc/default/grub
+# Grub theme
 sed -i 's/\/path\/to\/gfxtheme/\/usr\/share\/grub\/themes\/crystalux\/theme.txt/g' /mnt/etc/default/grub
 sed -i 's/#GRUB_THEME/GRUB_THEME/g' /mnt/etc/default/grub
-echo "Performing minor tweaks"
-sed -i 's/Arch Linux/CrystalUX/g' /etc/issue
-cd /etc/ && curl -LO https://raw.githubusercontent.com/crystalux-project/iso/main/os-release
-cd /usr/lib/ && curl -LO https://raw.githubusercontent.com/crystalux-project/iso/main/os-release
 
 cp /usr/bin/continue.sh /mnt/.
 chmod +x /mnt/continue.sh
