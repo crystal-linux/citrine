@@ -66,7 +66,8 @@ useradd -m ${UN}
 usermod -aG wheel ${UN}
 echo "Set password for ${UN}"
 passwd ${UN}
-echo "\n# Enabled by Crystalinstall" >> /etc/sudoers
+echo >> /etc/sudoers
+echo "# Enabled by Crystalinstall" >> /etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 
 if [[ -f /efimode ]]; then
