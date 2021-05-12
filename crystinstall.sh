@@ -48,6 +48,10 @@ if [[ "$PMODE" == "y" ]]; then
 else
     prompt "Install target (will be WIPED COMPLETELY)"
     DISK="$response"
+    if [[ ! -f $DISK ]]; then
+        err "Seems like $DISK doesn't exist. Did you typo?"
+        exit 1
+    fi
 fi
 
 if [[ $DISK == *"nvme"* ]]; then
