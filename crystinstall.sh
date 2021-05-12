@@ -35,7 +35,9 @@ if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     loadkeys ${KMP}
 fi
 
+clear
 
+inf "Disks:"
 fdisk -l | grep Disk | grep sectors --color=never
 
 prompt "Would you like to partition manually? (y/N)"
@@ -129,6 +131,7 @@ if [[ "$MANUAL" == "no" ]]; then
         fi
     fi
 else
+    clear
     inf "You have chosen manual partitioning."
     inf "We're going to drop to a shell for you to partition, but first, PLEASE READ these notes."
     inf "Before you exit the shell, make sure to format and mount a partition for / at /mnt"

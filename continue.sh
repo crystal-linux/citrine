@@ -14,8 +14,8 @@ prompt() {
     read response
 }
 
-TZ="/usr/share/zoneinfo/FUCK/OFF"
-
+clear
+TZ="/usr/share/LMAO/XD"
 while [[ ! -f $TZ ]]; do
     prompt "Pick a time zone (Format: America/New_York , Europe/London, etc)"
     PT="$response"
@@ -30,6 +30,7 @@ hwclock --systohc
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
+clear
 prompt "Do you need more locales than just en_US? (y/N)"
 MORE="$response"
 
@@ -63,6 +64,7 @@ if [[ -f /keymap ]]; then
     echo "KEYMAP=${KMP}" > /etc/vconsole.conf
 fi
 
+clear
 prompt "System hostname"
 HOSTNAME="$response"
 echo ${HOSTNAME} > /etc/hostname
@@ -74,6 +76,7 @@ if [[ "$IPS" == "y" || "$IPS" == "Y" ]]; then
 fi
 echo "127.0.1.1       ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
+clear
 inf "Password for root"
 passwd
 
@@ -103,14 +106,19 @@ systemctl enable NetworkManager
 pacman-key --init
 pacman-key --populate archlinux
 
+
+clear
 prompt "Would you like to install a DE profile? (y/N)"
 DEP="$response"
 
 if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     inf "- KDE"
     inf "- GNOME"
+    inf "- XFCE"
+    inf "- Budgie"
     inf "- i3"
     inf "(We'll add more as people ask)"
+    inf "Please enter exactly as shown."
     prompt ""
     DE="$response"
 
@@ -119,6 +127,12 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         DM="sddm"
     elif [[ "$DE" == "GNOME" ]]; then
         pacman -Sy --noconfirm gnome gnome-extra
+        DM="gdm"
+    elif [[ "$DE" == "XFCE" ]]; then
+        pacman -Sy --noconfirm xfce4 xfce4-goodies
+        DM="sddm"
+    elif [[ "$DE" == "Budgie" ]]; then
+        pacman -Sy --noconfirm budgie-desktop gnome
         DM="gdm"
     elif [[ "$DE" == "i3" ]]; then
         inf "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference (or not"
