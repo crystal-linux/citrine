@@ -21,7 +21,7 @@ fi
 
 prompt "Do you need a keyboard layout other than standard US? (y/N)"
 KBD="$response"
-inf "KBD=$response"
+echo "KBD=$response"
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     prompt "We're going to show the list of keymaps in less. Do you know how to exit less? (Y/n)"
     UL="$response"
@@ -33,7 +33,7 @@ if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     ls /usr/share/kbd/keymaps/**/*.map.gz | less
     prompt "Correct keymap (omit /usr/share/kbd/keymaps and the file extension)"
     KMP="$response"
-    inf "KMP=$response"
+    echo "KMP=$response"
     loadkeys ${KMP}
 fi
 
@@ -43,7 +43,7 @@ inf "Disks:"
 fdisk -l | grep Disk | grep sectors --color=never
 
 prompt "Would you like to partition manually? (y/N)"
-inf "PMODE=$response"
+echo "PMODE=$response"
 PMODE="$response"
 
 MANUAL="no"
@@ -52,7 +52,7 @@ if [[ "$PMODE" == "y" ]]; then
     MANUAL="yes"
 else
     prompt "Install target (will be WIPED COMPLETELY)"
-    inf "DISK=$response"
+    echo "DISK=$response"
     DISK="$response"
     if ! fdisk -l ${DISK}; then
         err "Seems like $DISK doesn't exist. Did you typo?"
@@ -157,7 +157,7 @@ else
         read
         bash
         prompt "All set (and partitions mounted?) (y/N)"
-        inf "STAT=$response"
+        echo "STAT=$response"
         STAT="$response"
         if [[ "$STAT" == "y" ]]; then
             CONFDONE="YEP"

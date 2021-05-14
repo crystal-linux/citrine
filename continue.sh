@@ -32,11 +32,13 @@ echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 clear
 prompt "Do you need more locales than just en_US? (y/N)"
+echo "MORE=$response"
 MORE="$response"
 
 if [[ "$MORE" == "y" || "$MORE" == "Y" ]]; then
     prompt "Preferred editor"
     PGRM="$response"
+    echo "PGRM=$response"
     if [[ -x "$(command -v ${PGRM})" ]]; then
         inf "Attempting to install ${PGRM}"
         pacman -Sy ${PGRM} --noconfirm
@@ -109,7 +111,7 @@ pacman-key --populate archlinux
 
 clear
 prompt "Would you like to install a DE/WM profile? (y/N)"
-inf "DEP=$response"
+echo "DEP=$response"
 DEP="$response"
 
 if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
@@ -132,7 +134,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     inf "(We'll add more as people ask)"
     inf "Please enter exactly as shown."
     prompt ""
-    inf "DE=$response"
+    echo "DE=$response"
     DE="$response"
     DM=""
     if [[ "$DE" == "Budgie" ]]; then
@@ -187,7 +189,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         inf "- [blank] for none"
         prompt ""
         ND="$response"
-        inf "ND=$ND"
+        echo "ND=$ND"
         if [[ "$ND" != "" ]]; then
             inf "Ok, we'll install $ND"
             DM="$ND"
