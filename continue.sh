@@ -108,38 +108,81 @@ pacman-key --populate archlinux
 
 
 clear
-prompt "Would you like to install a DE profile? (y/N)"
+prompt "Would you like to install a DE/WM profile? (y/N)"
 DEP="$response"
 
 if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
-    inf "- KDE"
-    inf "- GNOME"
-    inf "- XFCE"
+    inf "--- Desktop Environments ---"
     inf "- Budgie"
+    inf "- Cinnamon"
+    inf "- Deepin"
+    inf "- Enlightenment (note: very DIY. Read Arch Wiki)"
+    inf "- GNOME"
+    inf "- (GNOME) Flashback"
+    inf "- KDE"
+    inf "- LXDE"
+    inf "- LXQt"
+    inf "- Mate"
+    inf "- UKUI (note: very poorly documented. In english, anyway)"
+    inf "- Xfce"
+    inf "--- Window Managers ---"
     inf "- i3"
     inf "(We'll add more as people ask)"
     inf "Please enter exactly as shown."
     prompt ""
     DE="$response"
-
-    if [[ "$DE" == "KDE" ]]; then
-        pacman -Sy --noconfirm plasma kde-applications sddm
-        DM="sddm"
-    elif [[ "$DE" == "GNOME" ]]; then
-        pacman -Sy --noconfirm gnome gnome-extra
-        DM="gdm"
-    elif [[ "$DE" == "XFCE" ]]; then
-        pacman -Sy --noconfirm xfce4 xfce4-goodies
-        DM="sddm"
-    elif [[ "$DE" == "Budgie" ]]; then
+    DM=""
+    if [[ "$DE" == "Budgie" ]]; then
         pacman -Sy --noconfirm budgie-desktop gnome
         DM="gdm"
+    elif [[ "$DE" == "Cinnamon" ]]; then
+        pacman -Sy --noconfirm cinnamon
+        DM="gdm"
+    elif [[ "$DE" == "Deepin" ]]; then
+        pacman -Sy --noconfirm deepin deepin-extra
+        DM="lightdm"
+    elif [[ "$DE" == "Enlightenment" ]]; then
+        pacman -Sy --noconfirm enlightenment terminology
+    elif [[ "$DE" == "GNOME" ]]; then
+        pacman -Sy --noconfirm gnome gnome-extra chrome-gnome-shell
+        DM="gdm"
+    elif [[ "$DE" == "Flashback" || "$DE" == "GNOME Flashback" || "$DE" == "(GNOME) Flashback" ]]; then
+        DE="Flashback"
+        pacman -Sy --noconfirm gnome-flashback gnome-backgrounds gnome-control-center network-manger-applet gnoem-applets sensors-applet
+        DM="gdm"
+    elif [[ "$DE" == "KDE" ]]; then
+        pacman -Sy --noconfirm plasma kde-applications sddm
+        DM="sddm"
+    elif [[ "$DE" == "LXDE" ]]; then
+        pacman -Sy --noconfirm lxde
+        DM="lxdm"
+    elif [[ "$DE" == "LXQt" ]]; then
+        pacman -Sy --noconfirm lxqt breeze-icons xorg 
+        DM="sddm"
+    elif [[ "$DE" == "Mate" ]]; then
+        pacman -Sy --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
+        DM="gdm"
+    elif [[ "$DE" == "UKUI" ]]; then
+        pacman -Sy --noconfirm ukui
+    elif [[ "$DE" == "Xfce" ]]; then
+        pacman -Sy --noconfirm xfce4 xfce4-goodies
+        DM="sddm"
+    # Start WM's
     elif [[ "$DE" == "i3" ]]; then
-        inf "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference (or not"
+        inf "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference"
         inf "Press enter"
         prompt ""
         pacman -Sy i3 xorg-xinit xorg-server
-        prompt "Would you like a display manager? If so, provide the package name"
+    fi
+
+    if [[ "$DM" == "" ]]; then
+        inf "Your selected DE/WM doesn't have a standard display manager. Enter one of the below names, or leave blank for none"
+        inf "- gdm"
+        inf "- sddm"
+        inf "- lightdm (you'll need a greeter package. See Arch Wiki)"
+        inf "- (you can type another Arch package name if you have one in mind)"
+        inf "- [blank] for none"
+        prompt ""
         ND="$response"
         if [[ "$ND" != "" ]]; then
             inf "Ok, we'll install $ND"
@@ -147,12 +190,9 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
             pacman -Sy --noconfirm $DM
         else
             inf "Ok, not installing a display manager."
-            inf "We're setting up a default .xinitrc for you, though"
-            echo "exec i3" > /home/${UN}/.xinitrc
-            chown $UN:$UN /home/${UN}/.xinitrc
-            chmod +x /home/${UN}/.xinitrc
-            DM=""
         fi
+    else
+        pacman -Sy --noconfirm $DM
     fi
 
     if [[ "$DM" != "" ]]; then
@@ -160,6 +200,9 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         useDM="$response"
         if [[ "$useDM" != "n" ]]; then
             systemctl enable ${DM}
+            if [[ "$DE" == "Deepin" ]]; then
+                sed -i 's/lightdm-gtk-greeter/lightdm-deepin-greeter/g' /etc/lightdm/lightdm.conf
+            fi
         fi
     fi
 fi
