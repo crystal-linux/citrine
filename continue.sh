@@ -119,7 +119,8 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     inf "- Deepin"
     inf "- Enlightenment (note: very DIY. Read Arch Wiki)"
     inf "- GNOME"
-    inf "- (GNOME) Flashback"
+    # Flashback seems to need some work
+    #inf "- (GNOME) Flashback"
     inf "- KDE"
     inf "- LXDE"
     inf "- LXQt"
