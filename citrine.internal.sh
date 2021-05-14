@@ -66,6 +66,7 @@ if [[ $DISK == *"nvme"* ]]; then
 else
     NVME="no"
 fi
+echo "NVME=$NVME"
 
 if ls /sys/firmware/efi/efivars > /dev/null; then
     inf "Seems like this machine was booted with EFI. Noting"
@@ -73,6 +74,7 @@ if ls /sys/firmware/efi/efivars > /dev/null; then
 else
     EFI="no"
 fi
+echo "EFI=$EFI"
 
 inf "Setting system clock via network"
 timedatectl set-ntp true
@@ -80,30 +82,13 @@ timedatectl set-ntp true
 if [[ "$MANUAL" == "no" ]]; then
     echo "Partitioning disk"
     if [[ "$EFI" == "yes" ]]; then
-        (
-            echo "g"
-            echo "n"
-            echo
-            echo
-            echo "+200M"
-            echo "t"
-            echo "1"
-            echo "n"
-            echo
-            echo
-            echo
-            echo "w"
-        ) | fdisk $DISK
+        parted ${DISK} mklabel gpt --script
+        parted ${DISK} mkpart fat32 0 300 --script
+        parted ${DISK} mkpart ext4 300 100% --script
         inf "Partitioned ${DISK} as an EFI volume"
     else
-        (
-            echo "o"
-            echo "n"
-            echo 
-            echo
-            echo
-            echo "w"
-        ) | fdisk $DISK
+        parted ${DISK} mklabel msdos --script
+        parted ${DISK} mkpart primary ext4 0% 100% --script
         inf "Partitioned ${DISK} as an MBR volume"
     fi
 
