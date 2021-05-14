@@ -189,6 +189,6 @@ fi
 arch-chroot /mnt /continue.sh
 rm /mnt/continue.sh
 
-inf "Installation should now be complete. Please press enter to reboot :)"
+inf "Installation should now be complete."
 read
-reboot
+
