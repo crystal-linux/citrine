@@ -50,7 +50,7 @@ if [[ "$PMODE" == "y" ]]; then
 else
     prompt "Install target (will be WIPED COMPLETELY)"
     DISK="$response"
-    if [[ $(ls $DISK) == $DISK ]]; then
+    if ! fdisk -l ${DISK}; then
         err "Seems like $DISK doesn't exist. Did you typo?"
         exit 1
     fi
