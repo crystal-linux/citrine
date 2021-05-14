@@ -21,6 +21,7 @@ fi
 
 prompt "Do you need a keyboard layout other than standard US? (y/N)"
 KBD="$response"
+inf "KBD=$response"
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     prompt "We're going to show the list of keymaps in less. Do you know how to exit less? (Y/n)"
     UL="$response"
@@ -32,6 +33,7 @@ if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     ls /usr/share/kbd/keymaps/**/*.map.gz | less
     prompt "Correct keymap (omit /usr/share/kbd/keymaps and the file extension)"
     KMP="$response"
+    inf "KMP=$response"
     loadkeys ${KMP}
 fi
 
@@ -41,6 +43,7 @@ inf "Disks:"
 fdisk -l | grep Disk | grep sectors --color=never
 
 prompt "Would you like to partition manually? (y/N)"
+inf "PMODE=$response"
 PMODE="$response"
 
 MANUAL="no"
@@ -49,6 +52,7 @@ if [[ "$PMODE" == "y" ]]; then
     MANUAL="yes"
 else
     prompt "Install target (will be WIPED COMPLETELY)"
+    inf "DISK=$response"
     DISK="$response"
     if ! fdisk -l ${DISK}; then
         err "Seems like $DISK doesn't exist. Did you typo?"
@@ -153,6 +157,7 @@ else
         read
         bash
         prompt "All set (and partitions mounted?) (y/N)"
+        inf "STAT=$response"
         STAT="$response"
         if [[ "$STAT" == "y" ]]; then
             CONFDONE="YEP"
@@ -186,7 +191,7 @@ else
     echo ${DISK} > /mnt/diskn
 fi
 
-arch-chroot /mnt /continue.sh
+arch-chroot /mnt /continue.sh 2>&1 | tee /mnt/var/citrine.chroot.log
 rm /mnt/continue.sh
 
 inf "Installation should now be complete."

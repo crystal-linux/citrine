@@ -109,6 +109,7 @@ pacman-key --populate archlinux
 
 clear
 prompt "Would you like to install a DE/WM profile? (y/N)"
+inf "DEP=$response"
 DEP="$response"
 
 if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
@@ -130,6 +131,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     inf "(We'll add more as people ask)"
     inf "Please enter exactly as shown."
     prompt ""
+    inf "DE=$response"
     DE="$response"
     DM=""
     if [[ "$DE" == "Budgie" ]]; then
@@ -184,6 +186,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         inf "- [blank] for none"
         prompt ""
         ND="$response"
+        inf "ND=$ND"
         if [[ "$ND" != "" ]]; then
             inf "Ok, we'll install $ND"
             DM="$ND"
@@ -212,6 +215,7 @@ MP="$response"
 if [[ "$MP" != "n" ]]; then
     prompt "Write package names"
     PKGNS="$response"
+    inf "Installing: $PKGNS"
     pacman -Sy --noconfirm ${PKGNS}
 fi
 
