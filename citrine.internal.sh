@@ -30,8 +30,8 @@ if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
         inf "Press enter to go"
         read
     fi
-    ls /usr/share/kbd/keymaps/**/*.map.gz | less
-    prompt "Correct keymap (omit /usr/share/kbd/keymaps and the file extension)"
+    localectl list-keymaps
+    prompt "Correct keymap"
     KMP="$response"
     echo "KMP=$response"
     loadkeys ${KMP}
