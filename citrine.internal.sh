@@ -146,7 +146,7 @@ else
         STAT="$response"
         if [[ "$STAT" == "y" ]]; then
 
-            if ! findmnt | grep mnt; then
+            if ! findmnt | grep /mnt; then
                 err "Are you sure you've mounted the partitions?"
             else
                 CONFDONE="YEP"
