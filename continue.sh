@@ -127,8 +127,9 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     inf "- LXDE"
     inf "- LXQt"
     inf "- Mate"
-    inf "- UKUI (note: very poorly documented. In english, anyway)"
+    inf "- Cutefish"
     inf "- Xfce"
+    inf "- UKUI (note: very poorly documented. In english, anyway)"
     inf "--- Window Managers ---"
     inf "- i3"
     inf "(We'll add more as people ask)"
@@ -171,6 +172,9 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         pacman -Sy --noconfirm ukui
     elif [[ "$DE" == "Xfce" ]]; then
         pacman -Sy --noconfirm xfce4 xfce4-goodies
+        DM="sddm"
+    elif [[ "$DE" == "Cutefish" || "$DE" == "cutefish" ]] ;then
+        pacman -Sy --noconfirm cutefish
         DM="sddm"
     # Start WM's
     elif [[ "$DE" == "i3" ]]; then
