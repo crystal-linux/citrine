@@ -8,7 +8,7 @@ As long as it's installed with PacMan, run with `sudo citrine`
 Why? You can *try* to build it with `makepkg`, but for why?
 (PKGBUILD is in the `crystalux-project/packages` repo)
 
-
+## Desktop Environments
 | **DE** | **Description/bugs** | **Usability** | **Rating** |
 | --- | --- | --- | --- |
 | **budgie** | Just works | Works fine |  100
