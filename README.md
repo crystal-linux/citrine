@@ -8,6 +8,10 @@ As long as it's installed with PacMan, run with `sudo citrine`
 Why? You can *try* to build it with `makepkg`, but why?
 (PKGBUILD is in the `crystalux-project/packages` repo)
 
+## Requesting a WM/DE:
+Request WM/DEs [here](https://github.com/crystalux-project/citrine/issues/1).
+
+
 ## Desktop Environments
 | **DE** | **Usability** | **Note** |
 | --- | --- | --- |
@@ -24,4 +28,3 @@ Why? You can *try* to build it with `makepkg`, but why?
 | **UKUI** | ✅ | 
 | **XFCE** | ✅ | 
 
-Request WM/DEs [here](https://github.com/crystalux-project/citrine/issues/1).
