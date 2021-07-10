@@ -24,4 +24,4 @@ Why? You can *try* to build it with `makepkg`, but for why?
 | **UKUI** | ✅ | 
 | **XFCE** | ✅
 
-Request WM/DEs[here](https://github.com/crystalux-project/citrine/issues/1)
+Request WM/DEs [here](https://github.com/crystalux-project/citrine/issues/1).
