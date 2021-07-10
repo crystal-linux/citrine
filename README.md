@@ -23,3 +23,5 @@ Why? You can *try* to build it with `makepkg`, but for why?
 | **Mate** | ✅
 | **UKUI** | ✅ | 
 | **XFCE** | ✅
+
+Request WM/DEs[here](https://github.com/crystalux-project/citrine/issues/1)
