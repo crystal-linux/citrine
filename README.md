@@ -13,14 +13,13 @@ Why? You can *try* to build it with `makepkg`, but for why?
 | --- | --- | --- |
 | **Budgie** | ✅
 | **Cinnamon** | ✅
-| **Cutefish** | ... | Works but incomplete - wait for updates | 
-| **Deepin** | Usable | Deepin account doesn't work, but that's nothing new | 
-| **Enlightenment** | Untested | Testing this would end badly
+| **Cutefish** | ✅ | Works but incomplete - wait for updates | 
+| **Deepin** | ✅ | Deepin account doesn't work, but that's nothing new | 
+| **Enlightenment** | ✅ | 
 | **Gnome** | ✅
 | **KDE** | ✅
 | **LXDE** | ✅
 | **LXQt** | ✅
 | **Mate** | ✅
-| **Pantheon** | ❌ | Appstore broken, most apps broken
-| **UKUI** | Untested | Didn't bother testing
+| **UKUI** | ✅ | 
 | **XFCE** | ✅
