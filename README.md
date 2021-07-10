@@ -11,17 +11,17 @@ Why? You can *try* to build it with `makepkg`, but why?
 ## Desktop Environments
 | **DE** | **Usability** | **Note** |
 | --- | --- | --- |
-| **Budgie** | ✅
-| **Cinnamon** | ✅
-| **Cutefish** | ✅ |
-| **Deepin** | ✅ |
+| **Budgie** | ✅ | 
+| **Cinnamon** | ✅ | 
+| **Cutefish** | ✅ | Not a complete DE!
+| **Deepin** | ✅ | Works but sucks.
 | **Enlightenment** | ✅ | 
-| **Gnome** | ✅
-| **KDE** | ✅
-| **LXDE** | ✅
-| **LXQt** | ✅
-| **Mate** | ✅
+| **Gnome** | ✅ |
+| **KDE** | ✅ | Everything works as expected!
+| **LXDE** | ✅ | 
+| **LXQt** | ✅ | 
+| **Mate** | ✅ | 
 | **UKUI** | ✅ | 
-| **XFCE** | ✅
+| **XFCE** | ✅ | 
 
 Request WM/DEs [here](https://github.com/crystalux-project/citrine/issues/1).
