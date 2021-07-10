@@ -18,10 +18,10 @@ Request WM/DEs [here](https://github.com/crystalux-project/citrine/issues/1).
 | **Budgie** | ✅ | 
 | **Cinnamon** | ✅ | 
 | **Cutefish** | ✅ | Not a complete DE!
-| **Deepin** | ✅ | Works but sucks.
-| **Enlightenment** | ✅ | 
+| **Deepin** | ✅ |
+| **Enlightenment** | ✅ |
 | **Gnome** | ✅ |
-| **KDE** | ✅ | Everything works as expected!
+| **KDE** | ✅ | 
 | **LXDE** | ✅ | 
 | **LXQt** | ✅ | 
 | **Mate** | ✅ | 
