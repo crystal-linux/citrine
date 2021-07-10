@@ -13,8 +13,8 @@ Why? You can *try* to build it with `makepkg`, but why?
 | --- | --- | --- |
 | **Budgie** | ✅
 | **Cinnamon** | ✅
-| **Cutefish** | ✅ | Works but incomplete - wait for updates | 
-| **Deepin** | ✅ | Deepin account doesn't work, but that's nothing new | 
+| **Cutefish** | ✅ |
+| **Deepin** | ✅ |
 | **Enlightenment** | ✅ | 
 | **Gnome** | ✅
 | **KDE** | ✅
