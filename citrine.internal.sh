@@ -51,7 +51,7 @@ DISK=""
 if [[ "$PMODE" == "y" ]]; then
     MANUAL="yes"
 else
-    prompt "Install target (will be WIPED COMPLETELY)"
+    prompt "Install target WILL BE FULLY WIPED"
     echo "DISK=$response"
     DISK="$response"
     if ! fdisk -l ${DISK}; then
