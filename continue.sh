@@ -139,42 +139,42 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     DE="$response"
     DM=""
     if [[ "$DE" == "Budgie" ]]; then
-        pacman -Sy --noconfirm budgie-desktop gnome
+        pacman -Sy --quiet --noconfirm budgie-desktop gnome
         DM="gdm"
     elif [[ "$DE" == "Cinnamon" ]]; then
-        pacman -Sy --noconfirm cinnamon
+        pacman -Sy --quiet --noconfirm cinnamon
         DM="gdm"
     elif [[ "$DE" == "Deepin" ]]; then
-        pacman -Sy --noconfirm deepin deepin-extra
+        pacman -Sy --quiet --noconfirm deepin deepin-extra
         DM="lightdm"
     elif [[ "$DE" == "Enlightenment" ]]; then
-        pacman -Sy --noconfirm enlightenment terminology
+        pacman -Sy --quiet --noconfirm enlightenment terminology
     elif [[ "$DE" == "GNOME" ]]; then
-        pacman -Sy --noconfirm gnome gnome-extra chrome-gnome-shell
+        pacman -Sy --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
     elif [[ "$DE" == "Flashback" || "$DE" == "GNOME Flashback" || "$DE" == "(GNOME) Flashback" ]]; then
         DE="Flashback"
-        pacman -Sy --noconfirm gnome-flashback gnome-backgrounds gnome-control-center network-manger-applet gnoem-applets sensors-applet
+        pacman -Sy --quiet --noconfirm gnome-flashback gnome-backgrounds gnome-control-center network-manger-applet gnoem-applets sensors-applet
         DM="gdm"
     elif [[ "$DE" == "KDE" ]]; then
-        pacman -Sy --noconfirm plasma kde-applications sddm
+        pacman -Sy --quiet --noconfirm plasma kde-applications sddm
         DM="sddm"
     elif [[ "$DE" == "LXDE" ]]; then
-        pacman -Sy --noconfirm lxde
+        pacman -Sy --quiet --noconfirm lxde
         DM="lxdm"
     elif [[ "$DE" == "LXQt" ]]; then
-        pacman -Sy --noconfirm lxqt breeze-icons xorg 
+        pacman -Sy --quiet --noconfirm lxqt breeze-icons xorg 
         DM="sddm"
     elif [[ "$DE" == "Mate" ]]; then
-        pacman -Sy --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
+        pacman -Sy --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
         DM="gdm"
     elif [[ "$DE" == "UKUI" ]]; then
-        pacman -Sy --noconfirm ukui
+        pacman -Sy --quiet --noconfirm ukui
     elif [[ "$DE" == "Xfce" ]]; then
-        pacman -Sy --noconfirm xfce4 xfce4-goodies
+        pacman -Sy --quiet --noconfirm xfce4 xfce4-goodies
         DM="sddm"
     elif [[ "$DE" == "Cutefish" || "$DE" == "cutefish" ]] ;then
-        pacman -Sy --noconfirm cutefish
+        pacman -Sy --quiet --noconfirm cutefish
         DM="sddm"
     # Start WM's
     elif [[ "$DE" == "i3" ]]; then
@@ -197,12 +197,12 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         if [[ "$ND" != "" ]]; then
             inf "Ok, we'll install $ND"
             DM="$ND"
-            pacman -Sy --noconfirm $DM
+            pacman -Sy --quiet --noconfirm $DM
         else
             inf "Ok, not installing a display manager."
         fi
     else
-        pacman -Sy --noconfirm $DM
+        pacman -Sy --quiet --noconfirm $DM
     fi
 
     if [[ "$DM" != "" ]]; then
@@ -223,7 +223,7 @@ if [[ "$MP" != "n" ]]; then
     prompt "Write package names"
     PKGNS="$response"
     inf "Installing: $PKGNS"
-    pacman -Sy --noconfirm ${PKGNS}
+    pacman -Sy --quiet --noconfirm ${PKGNS}
 fi
 
 inf "Installation complete"
