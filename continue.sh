@@ -80,14 +80,27 @@ echo "127.0.1.1       ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
 clear
 inf "Password for root"
-passwd
+done="nope"
+while [[ "$done" == "nope" ]]; do
+    passwd
+    if [[ "$(echo $?)" == "0" ]]; then
+        done="yep"
+    fi
+done
 
 prompt "Your username"
 UN="$response"
 useradd -m ${UN}
 usermod -aG wheel ${UN}
 inf "Set password for ${UN}"
-passwd ${UN}
+done="nope"
+while [[ "$done" == "nope" ]]; do
+    passwd ${UN}
+    if [[ "$(echo $?)" == "0" ]]; then
+        done="yep"
+    fi
+done
+
 echo >> /etc/sudoers
 echo "# Enabled by Crystalinstall" >> /etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
