@@ -68,7 +68,7 @@ else
 fi
 echo "NVME=$NVME"
 
-if ls /sys/firmware/efi/efivars > /dev/null; then
+if [[ -d /sys/firmware/efi/efivars ]]; then
     inf "Seems like this machine was booted with EFI. Noting"
     EFI="yes"
 else
