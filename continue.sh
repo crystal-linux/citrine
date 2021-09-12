@@ -120,6 +120,7 @@ systemctl enable NetworkManager
 
 pacman-key --init
 pacman-key --populate archlinux
+pacman-key --populate crystal
 
 
 clear
