@@ -240,11 +240,11 @@ if [[ "$MP" != "n" ]]; then
         prompt "Write package names"
         PKGNS="$response"
         inf "Installing: $PKGNS"
-        pacman -Sy --quiet --noconfirm ${PKGNS}
+        ame -Sy ${PKGNS}
     else
         prompt "URL to package list"
         SRC="$response"
-        pacman -Sy --quiet --noconfirm $(curl ${SRC})
+        ame -Sy $(curl ${SRC})
     fi
 fi
 
