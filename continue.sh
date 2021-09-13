@@ -244,7 +244,10 @@ if [[ "$MP" != "n" ]]; then
     else
         prompt "URL to package list"
         SRC="$response"
-        ame -Sy $(curl ${SRC})
+        PKGS="$(curl ${SRC})"
+        for PKG in PKGS; do
+            ame -Sy ${PKG}
+        done
     fi
 fi
 
