@@ -234,10 +234,18 @@ fi
 prompt "Would you like to add more packages? (Y/n)"
 MP="$response"
 if [[ "$MP" != "n" ]]; then
-    prompt "Write package names"
-    PKGNS="$response"
-    inf "Installing: $PKGNS"
-    pacman -Sy --quiet --noconfirm ${PKGNS}
+    prompt "Would you like to use a URL to a package list? (Y/n)"
+    OL="$response"
+    if [[ "$OL" == "n" ]]; then
+        prompt "Write package names"
+        PKGNS="$response"
+        inf "Installing: $PKGNS"
+        pacman -Sy --quiet --noconfirm ${PKGNS}
+    else
+        prompt "URL to package list"
+        SRC="$response"
+        pacman -Sy --quiet --noconfirm $(curl ${SRC})
+    fi
 fi
 
 inf "Installation complete"
