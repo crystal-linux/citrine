@@ -240,13 +240,13 @@ if [[ "$MP" != "n" ]]; then
         prompt "Write package names"
         PKGNS="$response"
         inf "Installing: $PKGNS"
-        ame -Sy ${PKGNS}
+        ame -S ${PKGNS}
     else
         prompt "URL to package list"
         SRC="$response"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
-            ame -Sy ${PKG}
+            ame -S ${PKG}
         done
     fi
 fi
