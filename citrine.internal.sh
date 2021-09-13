@@ -160,7 +160,7 @@ else
     done
 fi
 
-inf "Setting up base CrystalUX System"
+inf "Setting up base Crystal System"
 crystalstrap /mnt base linux linux-firmware networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch
 if [[ "$EFI" == "yes" ]]; then
     inf "Installing EFI support package"
@@ -168,7 +168,7 @@ if [[ "$EFI" == "yes" ]]; then
 fi
 
 # Grub theme
-sed -i 's/\/path\/to\/gfxtheme/\/usr\/share\/grub\/themes\/crystalux\/theme.txt/g' /mnt/etc/default/grub
+sed -i 's/\/path\/to\/gfxtheme/\/usr\/share\/grub\/themes\/crystal\/theme.txt/g' /mnt/etc/default/grub
 sed -i 's/#GRUB_THEME/GRUB_THEME/g' /mnt/etc/default/grub
 
 cp /usr/bin/continue.sh /mnt/.
