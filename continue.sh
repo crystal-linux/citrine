@@ -168,7 +168,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         DM="gdm"
     elif [[ "$DE" == "Flashback" || "$DE" == "GNOME Flashback" || "$DE" == "(GNOME) Flashback" ]]; then
         DE="Flashback"
-        pacman -Sy --quiet --noconfirm gnome-flashback gnome-backgrounds gnome-control-center network-manger-applet gnoem-applets sensors-applet
+        pacman -Sy --quiet --noconfirm gnome-flashback gnome-backgrounds gnome-control-center network-manger-applet gnome-applets sensors-applet
         DM="gdm"
     elif [[ "$DE" == "KDE" ]]; then
         pacman -Sy --quiet --noconfirm plasma kde-applications sddm
