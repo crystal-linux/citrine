@@ -87,17 +87,25 @@ if [[ "$INIT" == "openrc" ]]; then
 fi
 
 inf "Installing connman"
-pacman -S connman-${INIT} connman-gtk
+pacman -S --quiet --noconfirm connman-${INIT} connman-gtk
 
 if [[ "$INIT" == "openrc" ]]; then
-    rc-update add connmand
+    rc-update add connmand default
+    rc-update add dbus default
+    rc-update add elogind default
 elif [[ "$INIT" == "runit" ]]; then
     ln -s /etc/runit/sv/connmand /etc/runit/runsvdir/default
+    ln -s /etc/runit/sv/dbus /etc/runit/runsvdir/default
+    ln -s /etc/runit/sv/elogind /etc/runit/runsvdir/default
 elif [[ "$INIT" == "s6" ]]; then
     s6-rc-bundle-update -c /etc/s6/rc/compiled add default connmand
+    s6-rc-bundle-update -c /etc/s6/rc/compiled add default dbus
+    s6-rc-bundle-update -c /etc/s6/rc/compiled add default elogind
 elif [[ "$INIT" == "66" ]]; then
     66-tree -ncE default
     66-enable -t default connmand
+    66-enable -t default dbus
+    66-enable -t default elogind
 else
     err "No such init: ${INIT}"
     exit 1
@@ -267,13 +275,13 @@ if [[ "$MP" != "n" ]]; then
         prompt "Write package names"
         PKGNS="$response"
         inf "Installing: $PKGNS"
-        ame -S ${PKGNS}
+        pacman -S --noconfirm --quiet ${PKGNS}
     else
         prompt "URL to package list"
         SRC="$response"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
-            ame -S ${PKG}
+            pacman -S --quiet --noconfirm ${PKG}
         done
     fi
 fi
