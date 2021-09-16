@@ -29,7 +29,7 @@ hwclock --systohc
 
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "export LANG=\"en_US.UTF-8\"" > /etc/locale.conf
-echo "exprot LC_COLLATE=\"C\"" >> /etc/locale.conf
+echo "export LC_COLLATE=\"C\"" >> /etc/locale.conf
 
 clear
 prompt "Do you need more locales than just en_US? (y/N)"
