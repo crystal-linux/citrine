@@ -196,7 +196,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     elif [[ "$DE" == "Enlightenment" ]]; then
         pacman -Sy --quiet --noconfirm enlightenment terminology
     elif [[ "$DE" == "GNOME" ]]; then
-        pacman -Sy --quiet --noconfirm gnome gnome-extra gnome-settings gnome-terminal gnome-backgrounds gnome-control-center #chrome-gnome-shell
+        pacman -Sy --quiet --noconfirm gnome gnome-extra gnome-settings gnome-terminal gnome-backgrounds gnome-control-center nautilus #chrome-gnome-shell
         DM="gdm"
     elif [[ "$DE" == "Flashback" || "$DE" == "GNOME Flashback" || "$DE" == "(GNOME) Flashback" ]]; then
         DE="Flashback"
