@@ -19,11 +19,6 @@ if [[ "$EUID" != "0" ]]; then
     exit 1
 fi
 
-#inf "Checking pacman keyrings"
-#pacman-key --init
-#pacman-key --populate archlinux
-#pacman-key --populate crystal
-
 prompt "Do you need a keyboard layout other than standard US? (y/N)"
 KBD="$response"
 echo "KBD=$response"
