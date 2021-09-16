@@ -89,6 +89,11 @@ fi
 inf "Installing connman"
 pacman -S --quiet --noconfirm connman-${INIT} connman-gtk
 
+inf "Re-enabling arch repos"
+pacman -S --quiet --noconfirm artix-archlinux-support
+pacman-key --populate archlinux
+#pacman-key --populate crystal
+
 if [[ "$INIT" == "openrc" ]]; then
     rc-update add connmand default
     rc-update add dbus default
@@ -191,7 +196,7 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     elif [[ "$DE" == "Enlightenment" ]]; then
         pacman -Sy --quiet --noconfirm enlightenment terminology
     elif [[ "$DE" == "GNOME" ]]; then
-        pacman -Sy --quiet --noconfirm gnome gnome-extra #chrome-gnome-shell
+        pacman -Sy --quiet --noconfirm gnome gnome-extra gnome-settings gnome-terminal gnome-backgrounds gnome-control-center #chrome-gnome-shell
         DM="gdm"
     elif [[ "$DE" == "Flashback" || "$DE" == "GNOME Flashback" || "$DE" == "(GNOME) Flashback" ]]; then
         DE="Flashback"
