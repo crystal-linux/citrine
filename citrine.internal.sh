@@ -19,10 +19,10 @@ if [[ "$EUID" != "0" ]]; then
     exit 1
 fi
 
-inf "Checking pacman keyrings"
-pacman-key --init
-pacman-key --populate archlinux
-pacman-key --populate crystal
+#inf "Checking pacman keyrings"
+#pacman-key --init
+#pacman-key --populate archlinux
+#pacman-key --populate crystal
 
 prompt "Do you need a keyboard layout other than standard US? (y/N)"
 KBD="$response"
@@ -160,21 +160,36 @@ else
     done
 fi
 
+prompt "Init system (one of: 'openrc', 'runit', 's6', '66')"
+INIT="$response"
+
 inf "Setting up base Crystal System"
-crystalstrap /mnt base linux linux-firmware networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch
-if [[ "$EFI" == "yes" ]]; then
-    inf "Installing EFI support package"
-    crystalstrap /mnt efibootmgr
+basestrap /mnt base base-devel linux linux-firmware dhcpcd wpa_supplicant grub os-prober man-db man-pages texinfo nano sudo curl neofetch #crystal-grub-theme 
+
+if [[ "$INIT" == "openrc" ]]; then
+    basestrap /mnt openrc elogind-openrc
+elif [[ "$INIT" == "runit" ]]; then
+    basestrap /mnt runit elogind-runit
+elif [[ "$INIT" == "s6" ]]; then
+    basestrap /mnt s6-base elogind-s6
+elif [[ "$INIT" == "66" ]]; then
+    basestrap /mnt 66 elogind-66
+else
+    err "No such init: $INIT"
+    exit 1
 fi
 
-# Grub theme
-sed -i 's/\/path\/to\/gfxtheme/\/usr\/share\/grub\/themes\/crystal\/theme.txt/g' /mnt/etc/default/grub
-sed -i 's/#GRUB_THEME/GRUB_THEME/g' /mnt/etc/default/grub
+echo "${INIT}" > /mnt/initsys
+
+if [[ "$EFI" == "yes" ]]; then
+    inf "Installing EFI support package"
+    basestrap /mnt efibootmgr
+fi
 
 cp /usr/bin/continue.sh /mnt/.
 chmod +x /mnt/continue.sh
 
-genfstab -U /mnt >> /mnt/etc/fstab
+fstabgen -U /mnt >> /mnt/etc/fstab
 
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     echo ${KMP} >> /mnt/keymap
@@ -186,7 +201,7 @@ else
     echo ${DISK} > /mnt/diskn
 fi
 
-arch-chroot /mnt /continue.sh 2>&1 | tee /mnt/var/citrine.chroot.log
+artix-chroot /mnt /continue.sh 2>&1 | tee /mnt/var/citrine.chroot.log
 rm /mnt/continue.sh
 
 inf "Installation should now be complete."

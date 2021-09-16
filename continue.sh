@@ -28,7 +28,8 @@ inf "Syncing hardware offset"
 hwclock --systohc
 
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
+echo "export LANG=\"en_US.UTF-8\"" > /etc/locale.conf
+echo "exprot LC_COLLATE=\"C\"" >> /etc/locale.conf
 
 clear
 prompt "Do you need more locales than just en_US? (y/N)"
@@ -78,6 +79,30 @@ if [[ "$IPS" == "y" || "$IPS" == "Y" ]]; then
 fi
 echo "127.0.1.1       ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
+INIT=$(cat /initsys)
+rm /initsys
+
+if [[ "$INIT" == "openrc" ]]; then
+    echo "hostname='${HOSTNAME}'" > /etc/conf.d/hostname
+fi
+
+inf "Installing connman"
+pacman -S connman-${INIT} connman-gtk
+
+if [[ "$INIT" == "openrc" ]]; then
+    rc-update add connmand
+elif [[ "$INIT" == "runit" ]]; then
+    ln -s /etc/runit/sv/connmand /etc/runit/runsvdir/default
+elif [[ "$INIT" == "s6" ]]; then
+    s6-rc-bundle-update -c /etc/s6/rc/compiled add default connmand
+elif [[ "$INIT" == "66" ]]; then
+    66-tree -ncE default
+    66-enable -t default connmand
+else
+    err "No such init: ${INIT}"
+    exit 1
+fi
+
 clear
 inf "Password for root"
 done="nope"
@@ -111,16 +136,10 @@ if [[ -f /efimode ]]; then
 else
     DISK=$(cat /diskn)
     rm /diskn
-    grub-install ${DISK}
+    grub-install --recheck ${DISK}
 fi
 
 grub-mkconfig -o /boot/grub/grub.cfg
-
-systemctl enable NetworkManager
-
-pacman-key --init
-pacman-key --populate archlinux
-pacman-key --populate crystal
 
 
 clear
@@ -211,19 +230,27 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
         if [[ "$ND" != "" ]]; then
             inf "Ok, we'll install $ND"
             DM="$ND"
-            pacman -Sy --quiet --noconfirm $DM
+            pacman -Sy --quiet --noconfirm $DM-${INIT}
         else
             inf "Ok, not installing a display manager."
         fi
     else
-        pacman -Sy --quiet --noconfirm $DM
+        pacman -Sy --quiet --noconfirm $DM-${INIT}
     fi
 
     if [[ "$DM" != "" ]]; then
         prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
         useDM="$response"
         if [[ "$useDM" != "n" ]]; then
-            systemctl enable ${DM}
+            if [[ "$INIT" == "openrc" ]]; then
+                rc-update add $DM
+            elif [[ "$INIT" == "runit" ]]; then
+                ln -s /etc/runit/sv/$DM /etc/runit/runsvdir/default
+            elif [[ "$INIT" == "s6" ]]; then
+                s6-rc-bundle-update -c /etc/s6/rc/compiled add default $DM
+            elif [[ "$INIT" == "66" ]]; then
+                66-enable -t default $DM
+            fi
             if [[ "$DE" == "Deepin" ]]; then
                 sed -i 's/lightdm-gtk-greeter/lightdm-deepin-greeter/g' /etc/lightdm/lightdm.conf
             fi
@@ -252,3 +279,7 @@ if [[ "$MP" != "n" ]]; then
 fi
 
 inf "Installation complete"
+
+if [[ "$INIT" == "66" ]]; then
+    err "Make sure to read https://wiki.artixlinux.org/Main/Installation at the very bottom for 66-specific post-install"
+fi
