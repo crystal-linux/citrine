@@ -7,10 +7,10 @@
 <h2 align="center"> Citrine </h2>
 </p>
 <p align="center">
-<img src=https://img.shields.io/github/stars/crystal-linux/citrine?style=flat&color=a900ff />
-<img src=https://img.shields.io/github/forks/crystal-linux/citrine?style=flat&color=a900ff />
-<img src=https://img.shields.io/github/issues/crystal-linux/citrine?style=flat&color=a900ff />
-<img src=https://img.shields.io/github/issues-pr/crystal-linux/citrine?style=flat&color=a900ff />
+<img src=https://img.shields.io/github/stars/crystal-linux/citrine?style=flat&color=a900ff&logo=Github />
+<img src=https://img.shields.io/github/forks/crystal-linux/citrine?style=flat&color=a900ff&logo=Github />
+<img src=https://img.shields.io/github/issues/crystal-linux/citrine?style=flat&color=a900ff&logo=Github />
+<img src=https://img.shields.io/github/issues-pr/crystal-linux/citrine?style=flat&color=a900ff&logo=Github />
 <a href="https://discord.gg/yp4xpZeAgW"><img alt="Discord" src="https://img.shields.io/discord/825473796227858482?color=blue&label=Discord&logo=Discord&logoColor=white"?link=https://discord.gg/yp4xpZeAgW&link=https://discord.gg/yp4xpZeAgW> </p></a>
 <p align="center"> Command line CrystalUX installer </p>
 
