@@ -37,7 +37,7 @@ Request WM/DEs [here](https://github.com/crystal-linux/citrine/issues/1).
 | **KDE** | ✅ | 
 | **LXDE** | ✅ | 
 | **LXQt** | ✅ | 
-| **Mate** | ✅ | 
+| **Mate** | ✅ | Seems to have fonts missing. See #10 |
 | **UKUI** | ✅ | 
 | **XFCE** | ✅ | 
 
