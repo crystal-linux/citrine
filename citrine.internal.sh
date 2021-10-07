@@ -174,7 +174,7 @@ sed -i 's/#GRUB_THEME/GRUB_THEME/g' /mnt/etc/default/grub
 cp /usr/bin/continue.sh /mnt/.
 chmod +x /mnt/continue.sh
 
-genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U /mnt > /mnt/etc/fstab
 
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     echo ${KMP} >> /mnt/keymap
