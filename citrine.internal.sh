@@ -81,6 +81,12 @@ else
 fi
 echo "EFI=$EFI"
 
+if [[ "$EFI" == "yes" ]]; then
+    prompt "This PC seems to have booted with UEFI. Press enter to confirm"
+else
+    prompt "This PC seems to *not* have booted with UEFI. Press enter to aknowledge, or press Control+C if this seems wrong."
+fi
+
 inf "Setting system clock via network"
 timedatectl set-ntp true
 
