@@ -12,7 +12,7 @@
 <img src=https://img.shields.io/github/issues/crystal-linux/citrine?style=flat&color=a900ff&logo=Github />
 <img src=https://img.shields.io/github/issues-pr/crystal-linux/citrine?style=flat&color=a900ff&logo=Github />
 <a href="https://discord.gg/yp4xpZeAgW"><img alt="Discord" src="https://img.shields.io/discord/825473796227858482?color=blue&label=Discord&logo=Discord&logoColor=white"?link=https://discord.gg/yp4xpZeAgW&link=https://discord.gg/yp4xpZeAgW> </p></a>
-<p align="center"> Command line CrystalUX installer </p>
+<p align="center"> Command line Crystal Linux installer </p>
 
 
 ## Usage:
@@ -22,9 +22,10 @@ As long as it's installed with Pacman, run with `sudo citrine`
 Why? You can *try* to build it with `makepkg`, but why?
 (PKGBUILD is in the `crystal-linux/packages` repo)
 
+<!--
 ## Requesting a WM/DE:
 Request WM/DEs [here](https://github.com/crystal-linux/citrine/issues/1).
-
+-->
 
 ## Desktop Environments
 | **DE** | **Usability** | **Note** |
