@@ -23,7 +23,7 @@ yesno() {
 
 dumptitle=""
 dump() {
-    dialog --title $dumptitle --no-collapse --msgbox "$@" 0 0
+    dialog --title "${dumptitle}" --no-collapse --msgbox "$@" 0 0
 }
 
 msgdat=""
@@ -71,7 +71,8 @@ echo "PMODE=$response"
 PMODE="$yn"
 
 dumptitle="System Disks"
-dump "$(fdisk -l | grep Disk | grep sectors --color=never)"
+diskdat="$(fdisk -l | grep Disk | grep sectors --color=never)"
+dump "$diskdat"
 
 MANUAL="no"
 DISK=""
