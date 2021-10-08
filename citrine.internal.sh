@@ -14,6 +14,26 @@ prompt() {
     read response
 }
 
+# ---------------------------------
+yn=""
+yesno() {
+    dialog --title Citrine --yesno "$@" 10 80
+    yn="$?"
+}
+
+dumptitle=""
+dump() {
+    dialog --title $dumptitle --no-collapse --msgbox "$@" 0 0
+}
+
+msgdat=""
+msgbox(){
+    dialog --title Citrine --inputbox "$@" 10 80 2>tmp
+    msgdat=$(cat tmp)
+    rm tmp
+}
+# --------------------------
+
 if [[ "$EUID" != "0" ]]; then
     err "Run as root"
     exit 1
@@ -24,10 +44,12 @@ pacman-key --init
 pacman-key --populate archlinux
 pacman-key --populate crystal
 
-prompt "Do you need a keyboard layout other than standard US? (y/N)"
-KBD="$response"
+yesno "Do you need a keyboard layout other than QWERTY US?"
+KBD="$yn"
 echo "KBD=$response"
-if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
+
+# TODO: layout select in dialog
+if [[ "$KBD" == "0" || "$KBD" == "0" ]]; then
     prompt "We're going to show the list of keymaps in less. Do you know how to exit less? (Y/n)"
     UL="$response"
     if [[ "$UL" == "n" ]]; then
@@ -44,23 +66,24 @@ fi
 
 clear
 
-inf "Disks:"
-fdisk -l | grep Disk | grep sectors --color=never
-
-prompt "Would you like to partition manually? (y/N)"
+yesno "Would you like to partition manually?"
 echo "PMODE=$response"
-PMODE="$response"
+PMODE="$yn"
+
+dumptitle="System Disks"
+dump "$(fdisk -l | grep Disk | grep sectors --color=never)"
 
 MANUAL="no"
 DISK=""
-if [[ "$PMODE" == "y" ]]; then
+if [[ "$PMODE" == "0" ]]; then
     MANUAL="yes"
 else
-    prompt "Install target WILL BE FULLY WIPED"
-    echo "DISK=$response"
-    DISK="$response"
+    msgbox "Install target WILL BE FULLY WIPED"
+    echo "DISK=$msgdat"
+    DISK="$msgdat"
     if ! fdisk -l ${DISK}; then
-        err "Seems like $DISK doesn't exist. Did you typo?"
+        dumptitle="ERROR"
+        dump "Seems like $DISK doesn't exist. Did you typo?"
         exit 1
     fi
 fi
@@ -81,16 +104,21 @@ else
 fi
 echo "EFI=$EFI"
 
+dumptitle="Please confirm"
 if [[ "$EFI" == "yes" ]]; then
-    prompt "This PC seems to have booted with UEFI. Press enter to confirm"
+    dump "This PC seems to *have* booted with UEFI. Press enter to confirmor Control+C to cancel"
 else
-    prompt "This PC seems to *not* have booted with UEFI. Press enter to aknowledge, or press Control+C if this seems wrong."
+    dump "This PC seems to *not* have booted with UEFI. Press enter to aknowledge, or press Control+C if this seems wrong."
 fi
 
 inf "Setting system clock via network"
 timedatectl set-ntp true
 
 if [[ "$MANUAL" == "no" ]]; then
+
+    dumptitle="CAUTION!"
+    dump "This is your last chance to avoid deleting critical data on $DISK. If you're not sure, press Control+C NOW!"
+
     echo "Partitioning disk"
     if [[ "$EFI" == "yes" ]]; then
         parted ${DISK} mklabel gpt --script
@@ -132,30 +160,34 @@ if [[ "$MANUAL" == "no" ]]; then
     fi
 else
     clear
-    inf "You have chosen manual partitioning."
-    inf "We're going to drop to a shell for you to partition, but first, PLEASE READ these notes."
-    inf "Before you exit the shell, make sure to format and mount a partition for / at /mnt"
+
+    dumptitle="Read carefully."
+
+    dump "You have chosen manual partitioning.\
+    We're going to drop to a shell for you to partition, but first, PLEASE READ these notes.\
+    Before you exit the shell, make sure to format and mount a partition for / at /mnt."
+
     if [[ "$EFI" == "yes" ]]; then
         mkdir -p /mnt/efi
-        inf "Additionally, since this machine was booted with UEFI, please make sure to make a 200MB or greater partition"
-        inf "of type VFAT and mount it at /mnt/efi"
+
+        dump "Additionally, since this machine was booted with UEFI, please make sure to make a 200MB or greater partition\
+        of type VFAT and mount it at /mnt/efi"
     else
-        inf "Please give me the full path of the device you're planning to partition (needed for bootloader installation later)"
-        inf "Example: /dev/sda"
-        printf ": "
-        read DISK
+        msgbox "Please give me the full path of the device you're planning to partition (needed for bootloader installation later)\
+        .. Example: /dev/sda"
+        DISK="${msgdat}"
     fi
 
     CONFDONE="NOPE"
+    dumptitle="Citrine"
 
     while [[ "$CONFDONE" == "NOPE" ]]; do
-        inf "Press enter to go to a shell."
-        read
-        bash
-        prompt "All set (and partitions mounted?) (y/N)"
-        echo "STAT=$response"
-        STAT="$response"
-        if [[ "$STAT" == "y" ]]; then
+        dump "Press enter to go to a shell. (ZSH)"
+        zsh
+        yesno "All set (and partitions mounted?)"
+        echo "STAT=$yn"
+        STAT="$yn"
+        if [[ "$STAT" == "0" ]]; then
 
             if ! findmnt | grep /mnt; then
                 err "Are you sure you've mounted the partitions?"
@@ -170,7 +202,8 @@ inf "Verifying network connection"
 ping -c 1 getcryst.al
 
 if [[ ! "$?" == "0" ]]; then
-    err "It seems like this system can't reach the internet. Exiting."
+    dumptitle="Error!"
+    dump "It seems like this system can't reach the internet. Exiting."
     exit 1
 fi
 
@@ -209,6 +242,7 @@ fi
 arch-chroot /mnt /continue.sh 2>&1 | tee /mnt/var/log/citrine.chroot.log
 rm /mnt/continue.sh
 
-inf "Installation should now be complete."
-read
+dumptitle="Citrine"
+dump "Installation should now be complete."
+#read
 
