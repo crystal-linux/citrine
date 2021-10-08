@@ -28,9 +28,9 @@ dump() {
 
 msgdat=""
 msgbox(){
-    dialog --title Citrine --inputbox "$@" 10 80 2>tmp
-    msgdat=$(cat tmp)
-    rm tmp
+    dialog --title Citrine --inputbox "$@" 10 80 2>tmp.citrine
+    msgdat=$(cat tmp.citrine)
+    rm tmp.citrine
 }
 # --------------------------
 
