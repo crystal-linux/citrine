@@ -17,20 +17,17 @@ prompt() {
 # ---------------------------------
 yn=""
 yesno() {
-    dialog --title Citrine --yesno "$@" 10 80
-    yn="$?"
+    yn=$(dialog --title Citrine --yesno "$@" --stdout 10 80)
 }
 
 dumptitle=""
 dump() {
-    dialog --title $dumptitle --no-collapse --msgbox "$@" 0 0
+    dialog --title "${dumptitle}" --no-collapse --msgbox "$@" 0 0
 }
 
 msgdat=""
 msgbox(){
-    dialog --title Citrine --inputbox "$@" 10 80 2>tmp.citrine
-    msgdat=$(cat tmp.citrine)
-    rm tmp.citrine
+    msgdat=$(dialog --title Citrine --inputbox "$@" --stdout 10 80)
 }
 # --------------------------
 

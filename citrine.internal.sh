@@ -17,8 +17,7 @@ prompt() {
 # ---------------------------------
 yn=""
 yesno() {
-    dialog --title Citrine --yesno "$@" 10 80
-    yn="$?"
+    yn=$(dialog --title Citrine --yesno "$@" --stdout 10 80)
 }
 
 dumptitle=""
@@ -28,9 +27,7 @@ dump() {
 
 msgdat=""
 msgbox(){
-    dialog --title Citrine --inputbox "$@" 10 80 2>tmp.citrine
-    msgdat=$(cat tmp.citrine)
-    rm tmp.citrine
+    msgdat=$(dialog --title Citrine --inputbox "$@" --stdout 10 80)
 }
 # --------------------------
 
@@ -210,7 +207,7 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch dialog
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
     crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch dialog
