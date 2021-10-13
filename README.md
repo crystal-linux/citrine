@@ -32,6 +32,7 @@ Request WM/DEs [here](https://github.com/crystal-linux/citrine/issues/1).
 | --- | --- | --- |
 | **Budgie** | ✅ | 
 | **Cinnamon** | ✅ | 
+| **Cutefish** | ❌ | **DOES NOT WORK AT ALL** |  
 | **Deepin** | ✅ |
 | **Enlightenment** | ✅ |
 | **Gnome** | ✅ |
