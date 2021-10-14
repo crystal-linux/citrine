@@ -210,5 +210,3 @@ arch-chroot /mnt /continue.sh 2>&1 | tee /mnt/var/log/citrine.chroot.log
 rm /mnt/continue.sh
 
 inf "Installation should now be complete."
-read
-
