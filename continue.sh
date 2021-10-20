@@ -32,6 +32,8 @@ msgbox(){
 # --------------------------
 
 clear
+
+# TODO: How might we make a list select of timezones?
 TZ="/usr/share/LMAO/XD"
 while [[ ! -f $TZ ]]; do
     msgbox "Pick a time zone (Format: America/New_York , Europe/London, etc)"
@@ -48,6 +50,8 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 clear
+
+# Todo: List-select of locales somehow
 prompt "Do you need more locales than just en_US? (y/N)"
 echo "MORE=$response"
 MORE="$response"

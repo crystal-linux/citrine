@@ -104,7 +104,7 @@ echo "EFI=$EFI"
 
 dumptitle="Please confirm"
 if [[ "$EFI" == "yes" ]]; then
-    dump "This PC seems to *have* booted with UEFI. Press enter to confirmor Control+C to cancel"
+    dump "This PC seems to *have* booted with UEFI. Press enter to confirm, or Control+C to cancel"
 else
     dump "This PC seems to *not* have booted with UEFI. Press enter to aknowledge, or press Control+C if this seems wrong."
 fi
@@ -145,7 +145,7 @@ if [[ "$MANUAL" == "no" ]]; then
     else
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as EFI"
-            mkfs.vfat ${DISK}1
+            mkfs.vfat -F32 ${DISK}1
             mkfs.ext4 ${DISK}2
             mount ${DISK}2 /mnt
             mkdir -p /mnt/efi
@@ -159,7 +159,7 @@ if [[ "$MANUAL" == "no" ]]; then
 else
     clear
 
-    dumptitle="Read carefully."
+    dumptitle="Read carefully!"
 
     dump "You have chosen manual partitioning.\
     We're going to drop to a shell for you to partition, but first, PLEASE READ these notes.\
@@ -201,16 +201,17 @@ ping -c 1 getcryst.al
 
 if [[ ! "$?" == "0" ]]; then
     dumptitle="Error!"
-    dump "It seems like this system can't reach the internet. Exiting."
+    dump "It seems like this system can't reach the internet. Failing here."
+    umount -l /mnt
     exit 1
 fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch dialog
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch dialog
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo nano sudo curl archlinux-keyring neofetch dialog
+    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch dialog
 fi
 
 if [[ "$EFI" == "yes" ]]; then
