@@ -39,7 +39,11 @@ if [[ "$MORE" == "y" || "$MORE" == "Y" ]]; then
     prompt "Preferred editor"
     PGRM="$response"
     echo "PGRM=$response"
-    if [[ -x "$(command -v ${PGRM})" ]]; then
+
+    inf "Checking if we have ${PGRM} already.."
+    which ${PGRM}
+
+    if [[ "$?" == "1" ]]; then
         inf "Attempting to install ${PGRM}"
         pacman -Sy ${PGRM} --noconfirm
     fi
