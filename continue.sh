@@ -104,7 +104,7 @@ echo "Defaults pwfeedback" >> /etc/sudoers
 
 if [[ -f /efimode ]]; then
     rm /efimode
-    grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
+    grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal --removeable
 else
     DISK=$(cat /diskn)
     rm /diskn
