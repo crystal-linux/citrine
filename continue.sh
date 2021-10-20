@@ -48,24 +48,6 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 clear
-<<<<<<< HEAD
-yesno "Do you need more locales than just en_US?"
-echo "MORE=$yn"
-MORE="$yn"
-
-if [[ "$MORE" == "0" ]]; then
-    msgbox "Preferred editor"
-    PGRM="$msgdat"
-    echo "PGRM=$msgdat"
-    if [[ -x "$(command -v ${PGRM})" ]]; then
-        inf "Attempting to install ${PGRM}"
-        pacman -Sy ${PGRM} --noconfirm
-    fi
-    dumptitle="Read carefully."
-    dump "When we open the file, please remove the leading # before any locales you need.\
-    Then, save and exit."
-    ${PGRM} /etc/locale.gen
-=======
 prompt "Do you need more locales than just en_US? (y/N)"
 echo "MORE=$response"
 MORE="$response"
@@ -75,7 +57,6 @@ if [[ "$MORE" == "y" || "$MORE" == "Y" ]]; then
     inf "Then, save and exit.\nPress enter."
     read
     micro /etc/locale.gen
->>>>>>> a911136 (ok sorry (not) we're using micro now)
 fi
 
 inf "Generating selected locales."
