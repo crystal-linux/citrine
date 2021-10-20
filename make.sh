@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ins() {
+    pacman -Sy dialog --noconfirm --needed
     chmod +x *.sh
     cp *.sh /usr/bin
     mv /usr/bin/citrine.sh /usr/bin/citrine
