@@ -109,6 +109,10 @@ echo >> /etc/sudoers
 echo "# Enabled by Crystalinstall" >> /etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 
+echo >> /etc/sudoers
+echo "# Enabled by Crystalinstall" >> /etc/sudoers
+echo "Defaults pwfeedback" >> /etc/sudoers
+
 if [[ -f /efimode ]]; then
     rm /efimode
     grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
