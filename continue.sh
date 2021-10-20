@@ -17,7 +17,8 @@ prompt() {
 # ---------------------------------
 yn=""
 yesno() {
-    yn=$(dialog --title Citrine --yesno "$@" --stdout 10 80)
+    dialog --title Citrine --yesno "$@" --stdout 10 80
+    yn=$(echo "?")
 }
 
 dumptitle=""
@@ -146,7 +147,6 @@ pacman-key --populate crystal
 clear
 
 yesno "Would you like to install a DE/WM profile?"
-
 echo "DEP=$yn"
 DEP="$yn"
 
