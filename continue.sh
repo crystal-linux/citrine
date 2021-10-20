@@ -40,6 +40,11 @@ if [[ "$MORE" == "y" || "$MORE" == "Y" ]]; then
     PGRM="$response"
     echo "PGRM=$response"
 
+    if [[ "$PGRM" == *"vim"* ]]; then
+        inf "The only *vim* package we support is nvim. Sorry!"
+        PGRM="neovim"
+    fi
+
     inf "Checking if we have ${PGRM} already.."
     which ${PGRM}
 
@@ -47,6 +52,11 @@ if [[ "$MORE" == "y" || "$MORE" == "Y" ]]; then
         inf "Attempting to install ${PGRM}"
         pacman -Sy ${PGRM} --noconfirm
     fi
+
+    if [[ "$PGRM" == "neovim" ]]; then
+        PGRM="nvim"
+    fi
+
     inf "When we open the file, please remove the leading # before any locales you need."
     inf "Then, save and exit.\nPress enter."
     read
