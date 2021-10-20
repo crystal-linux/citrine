@@ -17,7 +17,8 @@ prompt() {
 # ---------------------------------
 yn=""
 yesno() {
-    yn=$(dialog --title Citrine --yesno "$@" --stdout 10 80)
+    dialog --title Citrine --yesno "$@" 10 80
+    yn=$?
 }
 
 dumptitle=""
@@ -238,7 +239,236 @@ else
     echo ${DISK} > /mnt/diskn
 fi
 
-arch-chroot /mnt /continue.sh 2>&1 | tee /mnt/var/log/citrine.chroot.log
-rm /mnt/continue.sh
+
+clear
+
+TZ="/usr/share/place/holder"
+while [[ ! -f $TZ ]]; do 
+    msgbox "Pick a time zone (Format: America/New_York, Europe/London, etc)"
+    PT="$response"
+    TZ="/usr/share/zoneinfo/${PT}"
+done
+
+arch-chroot /mnt ln-sf $TZ /etc/localtime
+inf "Set TZ to ${TZ}"
+inf "Syncing hardware offset"
+arch-chroot /mnt hwclock --systohc
+
+echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
+echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+
+clear
+yesno "Do you need more locales than just en_US?"
+echo "More=$yn"
+More="$yn"
+
+if [[ "$MORE" == "0" ]]; then
+    msgbox "Preferred editor"
+    PRGRM="$msgdat"
+    echo "PGRM=$msgdat"
+    if [[ -x "$(command -v ${PGRM})" ]]; then
+        inf "Attempting to install ${PGRM}"
+        pacman -S ${PGRM} --noconfirm
+    fi
+    dumptitle="Read carefully."
+    dump "When we open the file, please remove the leading # before any locales you need.\
+    Then, save and exit."
+    ${PGRM} /mnt/etc/locale.gen
+fi
+
+inf "Generating selected locales."
+arch-chroot /mnt locale-gen
+
+echo
+echo
+inf "en_US was set as system primary."
+inf "After install, you can edit /etc/locale.conf to change the primary if desired."
+inf "Press enter"
+prompt ""
+
+if [[ -f /mnt/keymap ]];
+    inf "You set a custom keymap. We're making that change to the new system, too."
+    KMP=$(cat /keymap)
+    rm /mnt/keymap
+    echo "KEYMAP=${KMP}" > /mnt/etc/vconsole.conf
+fi
+
+clear
+msgbox "Enter the system hostname"
+HOSTNAME="$msgdat"
+echo ${HOSTNAME} > /mnt/etc/hostname
+echo "127.0.0.1     localhost" > /mnt/etc/hosts
+
+yesno "Would you like IPV6?"
+IPS="$yn"
+
+if [[ "$IPS" == "0" ]]; then
+    echo "::1       localhost" >> /mnt/etc/hosts
+fi
+echo "127.0.0.1     ${HOSTNAME}.localdomain ${HOSTNAME}" >> /mnt/etc/hosts
+
+clear
+inf "Set a password for root"
+done="nope"
+while [[ "$done" == "nope" ]]; do
+    arch-chroot /mnt passwd
+    if [[ "$(echo $?)" == "0" ]]; then
+        done="yep"
+    fi
+done
+
+msgbox "Your username"
+UN="$msgdat"
+arch-chroot /mnt "useradd -m ${UN} && usermod -aG wheel ${UN}"
+inf "Set password for ${UN}"
+done="nope"
+while [[ "$done" == "nope" ]]; do
+    arch-chroot /mnt "passwd ${UN}"
+    if [[ "$(echo $?)" == "0" ]]; then
+        done="yep"
+    fi
+done
+echo >> /mnt/etc/sudoers
+echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
+echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
+
+if [[ -f /mnt/efimode ]]; then
+    rm /mnt/efimode
+    arch-chroot /mnt "grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal"
+else 
+    DISK=$(cat /mnt/diskn)
+    rm /mnt/diskn
+    grub-install ${DISK}
+fi
+
+arch-chroot /mnt "grub-mkconfig -o /boot/grub/grub.cfg && systemctl enable NetworkManager && pacman-key --init && pacman-key --populate archlinux && pacman-key --populate crystal"
+
+clear
+
+yesno "Would you like to install a DE/WM profile?"
+echo "DEP=$yn"
+DEP="$yn"
+
+arch-chroot /mnt "pacman -Sy --quiet --noconfirm"
+
+if [[ "$DEP" == "0" ]]; then
+    inf "--- Desktop Environments ---"
+    inf "- Budgie"
+    inf "- Cinnamon"
+    inf "- Deepin"
+    inf "- Enlightenment (note: very DIY. Read Arch Wiki)"
+    inf "- GNOME"
+    # Flashback seems to need some work
+    #inf "- (GNOME) Flashback"
+    inf "- KDE"
+    inf "- LXDE"
+    inf "- LXQt"
+    inf "- Mate"
+    inf "- Cutefish"
+    inf "- Xfce"
+    inf "- UKUI (note: very poorly documented. In english, anyway)"
+    inf "--- Window Managers ---"
+    inf "- i3"
+    inf "(We'll add more as people ask)"
+    inf "Please enter exactly as shown."
+    prompt ""
+    echo "DE=$response"
+    DE="$response"
+    DM=""
+    case "$DE" in 
+    "Budgie")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm budgie-desktop gnome"
+        DM="gdm"
+        ;;
+    "Cinnamon")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm cinnamon"
+        DM="gdm"
+        ;;
+    "Deepin")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm deepin deepin-extra"
+        DM="lightdm"
+        ;;
+    "Gnome" | "GNOME" | "gnome")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell"
+        DM="gdm"
+        ;;
+    "KDE" | "Kde" | "kde")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm plasma kde-applications sddm"
+        DM="sddm"
+        ;;
+    "LXDE" | "lxde" | "Lxde")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm lxde"
+        DM="lxdm"
+        ;;
+    "LXQt" | "lxqt" | "Lxqt" | "LXQT")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm lxqt breeze-icons xorg"
+        DM="sddm"
+        ;;
+    "Mate" | "mate")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer"
+        DM="gdm"
+        ;;
+    "Xfce" | "xfce")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm xfce4 xfce4-goodies"
+        DM="sddm"
+    "Cutefish" |"cutefish")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm cutefish"
+        DM="sddm"
+    "Enlightenment" | "enlightenment")
+        arch-chroot /mnt "pacman -S --quiet --noconfirm enlightenment terminology"
+        ;;
+esac
+
+if [[ "$DM" == "" ]]; then
+    inf "Your selected DE/WM doesn't have a standard display manager. Enter one of the below names, or leave blank for none"
+    inf "- gdm"
+    inf "- sddm"
+    inf "- lightdm (you'll need a greeter package. See Arch Wiki)"
+    inf "- (you can type another Arch package name if you have one in mind)"
+    inf "- [blank] for none"
+    prompt ""
+    ND="$response"
+    echo "ND=$ND"
+    if [[ "$ND" != "" ]]; then
+        inf "Ok, we'll install $ND"
+        DM="$ND"
+        arch-chroot /mnt "pacman -S --quiet --noconfirm $DM"
+            else
+        inf "Ok, not installing a display manager."
+    fi
+else
+    arch-chroot /mnt "pacman -S --quiet --noconfirm $DM"
+fi
+if [[ "$DM" != "" ]]; then
+        prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
+        useDM="$response"
+        if [[ "$useDM" != "n" ]]; then
+            arch-chroot /mnt "systemctl enable ${DM}"
+            if [[ "$DE" == "Deepin" ]]; then
+                sed -i 's/lightdm-gtk-greeter/lightdm-deepin-greeter/g' /mnt/etc/lightdm/lightdm.conf
+            fi
+        fi
+    fi
+fi
+
+prompt "Would you like to add more packages? (Y/n)"
+MP="$response"
+if [["$MP" != "n" ]]; then
+    prompt "Would you like to use a URL to a package list? (Y/n)"
+    OL="$response"
+    if [["$OL" == "n" ]]; then
+        prompt "Write package names"
+        PKGNS="$response"
+        inf "Installing: $PKGNS"
+        arch-chroot /mnt "ame -S ${PKGNS}"
+    else 
+        prompt "URL to package list"
+        SRC="$response"
+        PKGS="$(curl ${SRC})"
+        for PKG in PKGS; do
+            arch-chroot /mnt "ame -S ${PKG}"
+        done
+    fi
+fi
 
 inf "Installation should now be complete."
