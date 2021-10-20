@@ -43,7 +43,7 @@ pacman-key --populate crystal
 
 yesno "Do you need a keyboard layout other than QWERTY US?"
 KBD="$yn"
-echo "KBD=$response"
+echo "KBD=$KBD"
 
 # TODO: layout select in dialog
 if [[ "$KBD" == "0" || "$KBD" == "0" ]]; then
@@ -64,7 +64,7 @@ fi
 clear
 
 yesno "Would you like to partition manually?"
-echo "PMODE=$response"
+echo "PMODE=$yn"
 PMODE="$yn"
 
 dumptitle="System Disks"

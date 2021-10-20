@@ -37,7 +37,7 @@ clear
 TZ="/usr/share/LMAO/XD"
 while [[ ! -f $TZ ]]; do
     msgbox "Pick a time zone (Format: America/New_York , Europe/London, etc)"
-    PT="$response"
+    PT="$msgdat"
     TZ="/usr/share/zoneinfo/${PT}"
 done
 
