@@ -286,7 +286,7 @@ inf "After install, you can edit /etc/locale.conf to change the primary if desir
 inf "Press enter"
 prompt ""
 
-if [[ -f /mnt/keymap ]];
+if [[ -f /mnt/keymap ]]; then
     inf "You set a custom keymap. We're making that change to the new system, too."
     KMP=$(cat /keymap)
     rm /mnt/keymap
