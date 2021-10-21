@@ -245,7 +245,7 @@ clear
 TZ="/usr/share/place/holder"
 while [[ ! -f $TZ ]]; do 
     msgbox "Pick a time zone (Format: America/New_York, Europe/London, etc)"
-    PT="$response"
+    PT="$msgdat"
     TZ="/usr/share/zoneinfo/${PT}"
 done
 
@@ -319,11 +319,12 @@ done
 
 msgbox "Your username"
 UN="$msgdat"
-arch-chroot /mnt "useradd -m ${UN} && usermod -aG wheel ${UN}"
+arch-chroot /mnt useradd -m ${UN}
+arch-chroot /mnt usermod -aG wheel ${UN}
 inf "Set password for ${UN}"
 done="nope"
 while [[ "$done" == "nope" ]]; do
-    arch-chroot /mnt "passwd ${UN}"
+    arch-chroot /mnt passwd ${UN}
     if [[ "$(echo $?)" == "0" ]]; then
         done="yep"
     fi
@@ -334,14 +335,18 @@ echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
 if [[ -f /mnt/efimode ]]; then
     rm /mnt/efimode
-    arch-chroot /mnt "grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal"
+    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
 else 
     DISK=$(cat /mnt/diskn)
     rm /mnt/diskn
     grub-install ${DISK}
 fi
 
-arch-chroot /mnt "grub-mkconfig -o /boot/grub/grub.cfg && systemctl enable NetworkManager && pacman-key --init && pacman-key --populate archlinux && pacman-key --populate crystal"
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+arch-chroot /mnt systemctl enable NetworkManager
+arch-chroot pacman-key --init
+arch-chroot pacman-key --populate archlinux
+arch-chroot pacman-key --populate crystal
 
 clear
 
@@ -349,7 +354,7 @@ yesno "Would you like to install a DE/WM profile?"
 echo "DEP=$yn"
 DEP="$yn"
 
-arch-chroot /mnt "pacman -Sy --quiet --noconfirm"
+arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
 if [[ "$DEP" == "0" ]]; then
     inf "--- Desktop Environments ---"
@@ -377,45 +382,45 @@ if [[ "$DEP" == "0" ]]; then
     DM=""
     case "$DE" in 
     "Budgie")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm budgie-desktop gnome"
+        arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
         DM="gdm"
         ;;
     "Cinnamon")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm cinnamon"
+        arch-chroot /mnt pacman -S --quiet --noconfirm cinnamon
         DM="gdm"
         ;;
     "Deepin")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm deepin deepin-extra"
+        arch-chroot /mnt pacman -S --quiet --noconfirm deepin deepin-extra
         DM="lightdm"
         ;;
     "Gnome" | "GNOME" | "gnome")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell"
+        arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
         ;;
     "KDE" | "Kde" | "kde")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm plasma kde-applications sddm"
+        arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
         DM="sddm"
         ;;
     "LXDE" | "lxde" | "Lxde")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm lxde"
+        arch-chroot /mnt pacman -S --quiet --noconfirm lxde
         DM="lxdm"
         ;;
     "LXQt" | "lxqt" | "Lxqt" | "LXQT")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm lxqt breeze-icons xorg"
+        arch-chroot /mnt pacman -S --quiet --noconfirm lxqt breeze-icons xorg
         DM="sddm"
         ;;
     "Mate" | "mate")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer"
+        arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
         DM="gdm"
         ;;
     "Xfce" | "xfce")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm xfce4 xfce4-goodies"
+        arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
         DM="sddm"
     "Cutefish" |"cutefish")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm cutefish"
+        arch-chroot /mnt pacman -S --quiet --noconfirm cutefish
         DM="sddm"
     "Enlightenment" | "enlightenment")
-        arch-chroot /mnt "pacman -S --quiet --noconfirm enlightenment terminology"
+        arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
         ;;
 esac
 
@@ -432,18 +437,18 @@ if [[ "$DM" == "" ]]; then
     if [[ "$ND" != "" ]]; then
         inf "Ok, we'll install $ND"
         DM="$ND"
-        arch-chroot /mnt "pacman -S --quiet --noconfirm $DM"
+        arch-chroot /mnt pacman -S --quiet --noconfirm $DM
             else
         inf "Ok, not installing a display manager."
     fi
 else
-    arch-chroot /mnt "pacman -S --quiet --noconfirm $DM"
+    arch-chroot /mnt pacman -S --quiet --noconfirm $DM
 fi
 if [[ "$DM" != "" ]]; then
         prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
         useDM="$response"
         if [[ "$useDM" != "n" ]]; then
-            arch-chroot /mnt "systemctl enable ${DM}"
+            arch-chroot /mnt systemctl enable ${DM}
             if [[ "$DE" == "Deepin" ]]; then
                 sed -i 's/lightdm-gtk-greeter/lightdm-deepin-greeter/g' /mnt/etc/lightdm/lightdm.conf
             fi
@@ -460,13 +465,13 @@ if [["$MP" != "n" ]]; then
         prompt "Write package names"
         PKGNS="$response"
         inf "Installing: $PKGNS"
-        arch-chroot /mnt "ame -S ${PKGNS}"
+        arch-chroot /mnt ame -S ${PKGNS}
     else 
         prompt "URL to package list"
         SRC="$response"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
-            arch-chroot /mnt "ame -S ${PKG}"
+            arch-chroot /mnt ame -S ${PKG}
         done
     fi
 fi
