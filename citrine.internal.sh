@@ -460,7 +460,7 @@ fi
 
 prompt "Would you like to add more packages? (Y/n)"
 MP="$response"
-if [["$MP" != "n" ]]; then
+if [[ "$MP" != "n" ]]; then
     prompt "Would you like to use a URL to a package list? (Y/n)"
     OL="$response"
     if [["$OL" == "n" ]]; then
