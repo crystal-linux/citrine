@@ -416,9 +416,11 @@ if [[ "$DEP" == "0" ]]; then
     "Xfce" | "xfce")
         arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
         DM="sddm"
+        ;;
     "Cutefish" | "cutefish")
         arch-chroot /mnt pacman -S --quiet --noconfirm cutefish
         DM="sddm"
+        ;;
     "Enlightenment" | "enlightenment")
         arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
         ;;
