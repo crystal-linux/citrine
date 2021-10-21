@@ -136,8 +136,8 @@ if [[ "$MANUAL" == "no" ]]; then
             mkfs.vfat ${DISK}p1
             mkfs.ext4 ${DISK}p2
             mount ${DISK}p2 /mnt
-            mkdir -p /mnt/efi
-            mount ${DISK}p1 /mnt/efi
+            mkdir -p /mnt/boot/efi
+            mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
             mkfs.ext4 ${DISK}p1
@@ -149,8 +149,8 @@ if [[ "$MANUAL" == "no" ]]; then
             mkfs.vfat -F32 ${DISK}1
             mkfs.ext4 ${DISK}2
             mount ${DISK}2 /mnt
-            mkdir -p /mnt/efi
-            mount ${DISK}1 /mnt/efi
+            mkdir -p /mnt/boot/efi
+            mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
             mkfs.ext4 ${DISK}1
@@ -167,10 +167,10 @@ else
     Before you exit the shell, make sure to format and mount a partition for / at /mnt."
 
     if [[ "$EFI" == "yes" ]]; then
-        mkdir -p /mnt/efi
+        mkdir -p /mnt/boot/efi
 
         dump "Additionally, since this machine was booted with UEFI, please make sure to make a 200MB or greater partition\
-        of type VFAT and mount it at /mnt/efi"
+        of type VFAT and mount it at /mnt/boot/efi"
     else
         msgbox "Please give me the full path of the device you're planning to partition (needed for bootloader installation later)\
         .. Example: /dev/sda"
@@ -209,10 +209,10 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch dialog
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch dialog
+    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
 fi
 
 if [[ "$EFI" == "yes" ]]; then
@@ -224,21 +224,7 @@ fi
 sed -i 's/\/path\/to\/gfxtheme/\/usr\/share\/grub\/themes\/crystal\/theme.txt/g' /mnt/etc/default/grub
 sed -i 's/#GRUB_THEME/GRUB_THEME/g' /mnt/etc/default/grub
 
-cp /usr/bin/continue.sh /mnt/.
-chmod +x /mnt/continue.sh
-
 genfstab -U /mnt > /mnt/etc/fstab
-
-if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
-    echo ${KMP} >> /mnt/keymap
-fi
-
-if [[ "$EFI" == "yes" ]]; then
-    touch /mnt/efimode
-else
-    echo ${DISK} > /mnt/diskn
-fi
-
 
 clear
 
@@ -286,10 +272,7 @@ inf "After install, you can edit /etc/locale.conf to change the primary if desir
 inf "Press enter"
 prompt ""
 
-if [[ -f /mnt/keymap ]]; then
-    inf "You set a custom keymap. We're making that change to the new system, too."
-    KMP=$(cat /keymap)
-    rm /mnt/keymap
+if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     echo "KEYMAP=${KMP}" > /mnt/etc/vconsole.conf
 fi
 
@@ -333,12 +316,9 @@ echo >> /mnt/etc/sudoers
 echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
-if [[ -f /mnt/efimode ]]; then
-    rm /mnt/efimode
+if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
 else 
-    DISK=$(cat /mnt/diskn)
-    rm /mnt/diskn
     grub-install ${DISK}
 fi
 
@@ -372,8 +352,6 @@ if [[ "$DEP" == "0" ]]; then
     inf "- Cutefish"
     inf "- Xfce"
     inf "- UKUI (note: very poorly documented. In english, anyway)"
-    inf "--- Window Managers ---"
-    inf "- i3"
     inf "(We'll add more as people ask)"
     inf "Please enter exactly as shown."
     prompt ""
@@ -381,15 +359,15 @@ if [[ "$DEP" == "0" ]]; then
     DE="$response"
     DM=""
     case "$DE" in 
-    "Budgie")
+    "Budgie" | "budgie")
         arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
         DM="gdm"
         ;;
-    "Cinnamon")
+    "Cinnamon" | "cinnamon")
         arch-chroot /mnt pacman -S --quiet --noconfirm cinnamon
         DM="gdm"
         ;;
-    "Deepin")
+    "Deepin" | "deepin")
         arch-chroot /mnt pacman -S --quiet --noconfirm deepin deepin-extra
         DM="lightdm"
         ;;
