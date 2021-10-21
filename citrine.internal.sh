@@ -463,7 +463,7 @@ MP="$response"
 if [[ "$MP" != "n" ]]; then
     prompt "Would you like to use a URL to a package list? (Y/n)"
     OL="$response"
-    if [["$OL" == "n" ]]; then
+    if [[ "$OL" == "n" ]]; then
         prompt "Write package names"
         PKGNS="$response"
         inf "Installing: $PKGNS"
