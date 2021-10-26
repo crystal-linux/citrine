@@ -217,7 +217,7 @@ fi
 
 if [[ "$EFI" == "yes" ]]; then
     inf "Installing EFI support package"
-    crystalstrap /mnt efibootmgr
+    crystalstrap /mnt efibootmgr refind
 fi
 
 # Grub theme
@@ -317,7 +317,7 @@ echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
 if [[ "$EFI" == "yes" ]]; then
-    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
+    grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
 else 
     grub-install ${DISK}
 fi
