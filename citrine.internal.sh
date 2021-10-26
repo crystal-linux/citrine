@@ -209,20 +209,19 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager grub crystal-grub-theme man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
+    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
 fi
 
 if [[ "$EFI" == "yes" ]]; then
     inf "Installing EFI support package"
     crystalstrap /mnt efibootmgr refind
+else 
+    inf "Installing Syslinux bootloader"
+    crystalstrap /mnt Syslinux
 fi
-
-# Grub theme
-sed -i 's/\/path\/to\/gfxtheme/\/usr\/share\/grub\/themes\/crystal\/theme.txt/g' /mnt/etc/default/grub
-sed -i 's/#GRUB_THEME/GRUB_THEME/g' /mnt/etc/default/grub
 
 genfstab -U /mnt > /mnt/etc/fstab
 
@@ -317,12 +316,11 @@ echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
 if [[ "$EFI" == "yes" ]]; then
-    grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=Crystal
+    arch-chroot /mnt refind-install
 else 
-    grub-install ${DISK}
+    arch-chroot /mnt syslinux-install_update -i -a -m
 fi
 
-arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 arch-chroot /mnt systemctl enable NetworkManager
 arch-chroot pacman-key --init
 arch-chroot pacman-key --populate archlinux
