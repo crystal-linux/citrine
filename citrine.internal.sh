@@ -220,7 +220,7 @@ if [[ "$EFI" == "yes" ]]; then
     crystalstrap /mnt efibootmgr refind
 else 
     inf "Installing Syslinux bootloader"
-    crystalstrap /mnt Syslinux
+    crystalstrap /mnt syslinux
 fi
 
 genfstab -U /mnt > /mnt/etc/fstab
