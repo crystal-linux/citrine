@@ -318,7 +318,7 @@ echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt refind-install
 else 
-    arch-chroot /mnt wget https://git.getcryst.al/crystal/Syslinux_install_script/raw/branch/master/syslinux-install_update -O /usr/bin/syslinux-install_update
+    arch-chroot /mnt curl https://git.getcryst.al/crystal/Syslinux_install_script/raw/branch/master/syslinux-install_update -o /usr/bin/syslinux-install_update
     arch-chroot /mnt syslinux-install_update -i -a -m
 fi
 
