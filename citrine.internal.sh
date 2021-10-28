@@ -316,7 +316,7 @@ echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
 if [[ "$EFI" == "yes" ]]; then
-    root="$(findmnt -n -o SOURCE / | awk 'BEGIN { FS = "/" }; { print $3 }')"
+    root="$(findmnt -n -o SOURCE /mnt/ | awk 'BEGIN { FS = "/" }; { print $3 }')"
     arch-chroot /mnt refind-install
     echo '"Crystal Linux"          "rw root=/dev/placeholder"' > /mnt/boot/refind_linux.conf
     sed -i "s/placeholder/$root/" /mnt/boot/refind_linux.conf
