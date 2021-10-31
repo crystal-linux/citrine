@@ -12,30 +12,8 @@
 
 
 ## Usage:
-As long as it's installed with Pacman, run with `sudo citrine`
+As long as it's installed with Pacman, run with `citrine`
 
 ## For Non-Crystal systems:
 Why? You can *try* to build it with `makepkg`, but why?
 (PKGBUILD is in the `crystal-linux/packages` repo)
-
-<!--
-## Requesting a WM/DE:
-Request WM/DEs [here](https://github.com/crystal-linux/citrine/issues/1).
--->
-
-## Desktop Environments
-| **DE** | **Usability** | **Note** |
-| --- | --- | --- |
-| **Budgie** | ✅ | 
-| **Cinnamon** | ✅ | 
-| **Cutefish** | ❌ | **DOES NOT WORK AT ALL** |  
-| **Deepin** | ✅ |
-| **Enlightenment** | ✅ |
-| **Gnome** | ✅ |
-| **KDE** | ✅ | 
-| **LXDE** | ✅ | 
-| **LXQt** | ✅ | 
-| **Mate** | ✅ | Seems to have fonts missing. |
-| **UKUI** | ✅ | 
-| **XFCE** | ✅ | 
-
