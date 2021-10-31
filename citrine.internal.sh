@@ -181,7 +181,7 @@ else
     dumptitle="Citrine"
 
     while [[ "$CONFDONE" == "NOPE" ]]; do
-        dump "Press enter to go to a shell. (ZSH)"
+        dump "Press enter a shell. (ZSH)"
         zsh
         yesno "All set (and partitions mounted?)"
         echo "STAT=$yn"
