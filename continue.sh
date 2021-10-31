@@ -14,11 +14,31 @@ prompt() {
     read response
 }
 
+# ---------------------------------
+yn=""
+yesno() {
+    dialog --title Citrine --yesno "$@" --stdout 10 80
+    yn=$(echo "?")
+}
+
+dumptitle=""
+dump() {
+    dialog --title "${dumptitle}" --no-collapse --msgbox "$@" 0 0
+}
+
+msgdat=""
+msgbox(){
+    msgdat=$(dialog --title Citrine --inputbox "$@" --stdout 10 80)
+}
+# --------------------------
+
 clear
+
+# TODO: How might we make a list select of timezones?
 TZ="/usr/share/LMAO/XD"
 while [[ ! -f $TZ ]]; do
-    prompt "Pick a time zone (Format: America/New_York , Europe/London, etc)"
-    PT="$response"
+    msgbox "Pick a time zone (Format: America/New_York , Europe/London, etc)"
+    PT="$msgdat"
     TZ="/usr/share/zoneinfo/${PT}"
 done
 
@@ -31,6 +51,8 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 clear
+
+# Todo: List-select of locales somehow
 prompt "Do you need more locales than just en_US? (y/N)"
 echo "MORE=$response"
 MORE="$response"
@@ -60,19 +82,21 @@ if [[ -f /keymap ]]; then
 fi
 
 clear
-prompt "System hostname"
-HOSTNAME="$response"
+msgbox "Enter the system hostname"
+HOSTNAME="$msgdat"
 echo ${HOSTNAME} > /etc/hostname
 echo "127.0.0.1     localhost" > /etc/hosts
-prompt "Would you like IPV6? (y/N)"
-IPS="$response"
-if [[ "$IPS" == "y" || "$IPS" == "Y" ]]; then
+
+yesno "Would you like IPV6?"
+IPS="$yn"
+
+if [[ "$IPS" == "0" ]]; then
     echo "::1       localhost" >> /etc/hosts
 fi
 echo "127.0.1.1       ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
 clear
-inf "Password for root"
+inf "Set a password for root"
 done="nope"
 while [[ "$done" == "nope" ]]; do
     passwd
@@ -81,8 +105,8 @@ while [[ "$done" == "nope" ]]; do
     fi
 done
 
-prompt "Your username"
-UN="$response"
+msgbox "Your username"
+UN="$msgdat"
 useradd -m ${UN}
 usermod -aG wheel ${UN}
 inf "Set password for ${UN}"
@@ -121,34 +145,32 @@ pacman-key --populate crystal
 
 
 clear
-prompt "Would you like to install a DE/WM profile? (y/N)"
-echo "DEP=$response"
-DEP="$response"
 
-if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
-    inf "--- Desktop Environments ---"
-    inf "- Budgie"
-    inf "- Cinnamon"
-    inf "- Deepin"
-    inf "- Enlightenment (note: very DIY. Read Arch Wiki)"
-    inf "- GNOME"
-    # Flashback seems to need some work
-    #inf "- (GNOME) Flashback"
-    inf "- KDE"
-    inf "- LXDE"
-    inf "- LXQt"
-    inf "- Mate"
-    inf "- Cutefish"
-    inf "- Xfce"
-    inf "- UKUI (note: very poorly documented. In english, anyway)"
-    inf "--- Window Managers ---"
-    inf "- i3"
-    inf "(We'll add more as people ask)"
-    inf "Please enter exactly as shown."
-    prompt ""
-    echo "DE=$response"
-    DE="$response"
+yesno "Would you like to install a DE/WM profile?"
+echo "DEP=$yn"
+DEP="$yn"
+
+if [[ "$DEP" == "0" ]]; then
+
+    dumptitle="Desktop/WM Choices"
+
+    dump "\
+    --- Desktop Environments ---
+    - Budgie
+    - Cinnamon
+    - Deepin
+    - GNOME
+    - KDE
+    - LXDE
+    - LXQt
+    - Mate
+    - Xfce"
+
+    msgbox "DE Choice (please enter exactly)"
+    echo "DE=$msgdat"
+    DE="$msgdat"
     DM=""
+
     if [[ "$DE" == "Budgie" ]]; then
         pacman -Sy --quiet --noconfirm budgie-desktop gnome
         DM="gdm"
@@ -158,14 +180,8 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     elif [[ "$DE" == "Deepin" ]]; then
         pacman -Sy --quiet --noconfirm deepin deepin-extra
         DM="lightdm"
-    elif [[ "$DE" == "Enlightenment" ]]; then
-        pacman -Sy --quiet --noconfirm enlightenment terminology
     elif [[ "$DE" == "GNOME" ]]; then
         pacman -Sy --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
-        DM="gdm"
-    elif [[ "$DE" == "Flashback" || "$DE" == "GNOME Flashback" || "$DE" == "(GNOME) Flashback" ]]; then
-        DE="Flashback"
-        pacman -Sy --quiet --noconfirm gnome-flashback gnome-backgrounds gnome-control-center network-manger-applet gnome-applets sensors-applet
         DM="gdm"
     elif [[ "$DE" == "KDE" ]]; then
         pacman -Sy --quiet --noconfirm plasma kde-applications sddm
@@ -179,47 +195,17 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     elif [[ "$DE" == "Mate" ]]; then
         pacman -Sy --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
         DM="gdm"
-    elif [[ "$DE" == "UKUI" ]]; then
-        pacman -Sy --quiet --noconfirm ukui
     elif [[ "$DE" == "Xfce" ]]; then
         pacman -Sy --quiet --noconfirm xfce4 xfce4-goodies
         DM="sddm"
     elif [[ "$DE" == "Cutefish" || "$DE" == "cutefish" ]] ;then
         pacman -Sy --quiet --noconfirm cutefish
         DM="sddm"
-    # Start WM's
-    elif [[ "$DE" == "i3" ]]; then
-        inf "Choose either i3 or i3-gaps in below prompt. Rest of group is your preference"
-        inf "Press enter"
-        prompt ""
-        pacman -Sy i3 xorg-xinit xorg-server
-    fi
-
-    if [[ "$DM" == "" ]]; then
-        inf "Your selected DE/WM doesn't have a standard display manager. Enter one of the below names, or leave blank for none"
-        inf "- gdm"
-        inf "- sddm"
-        inf "- lightdm (you'll need a greeter package. See Arch Wiki)"
-        inf "- (you can type another Arch package name if you have one in mind)"
-        inf "- [blank] for none"
-        prompt ""
-        ND="$response"
-        echo "ND=$ND"
-        if [[ "$ND" != "" ]]; then
-            inf "Ok, we'll install $ND"
-            DM="$ND"
-            pacman -Sy --quiet --noconfirm $DM
-        else
-            inf "Ok, not installing a display manager."
-        fi
-    else
-        pacman -Sy --quiet --noconfirm $DM
-    fi
 
     if [[ "$DM" != "" ]]; then
-        prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
-        useDM="$response"
-        if [[ "$useDM" != "n" ]]; then
+        yesno "Would you like to enable ${DM} for ${DE}?"
+        useDM="$yn"
+        if [[ "$useDM" == "0" ]]; then
             systemctl enable ${DM}
             if [[ "$DE" == "Deepin" ]]; then
                 sed -i 's/lightdm-gtk-greeter/lightdm-deepin-greeter/g' /etc/lightdm/lightdm.conf
@@ -228,19 +214,19 @@ if [[ "$DEP" == "y" || "$DEP" == "Y" ]]; then
     fi
 fi
 
-prompt "Would you like to add more packages? (Y/n)"
-MP="$response"
-if [[ "$MP" != "n" ]]; then
-    prompt "Would you like to use a URL to a package list? (Y/n)"
-    OL="$response"
-    if [[ "$OL" == "n" ]]; then
-        prompt "Write package names"
-        PKGNS="$response"
+yesno "Would you like to add more packages?"
+MP="$yn"
+if [[ "$MP" == "0" ]]; then
+    yesno "Would you like to use a URL to a package list?"
+    OL="$yesno"
+    if [[ "$OL" != "0" ]]; then
+        msgbox "Package names"
+        PKGNS="$msgdat"
         inf "Installing: $PKGNS"
         ame -S ${PKGNS}
     else
-        prompt "URL to package list"
-        SRC="$response"
+        msgbox "URL to package list"
+        SRC="$msgdat"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
             ame -S ${PKG}
@@ -248,4 +234,4 @@ if [[ "$MP" != "n" ]]; then
     fi
 fi
 
-inf "Installation complete"
+#inf "Installation complete"
