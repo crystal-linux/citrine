@@ -134,26 +134,26 @@ if [[ "$MANUAL" == "no" ]]; then
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as NVME EFI"
             mkfs.vfat ${DISK}p1
-            mkfs.ext4 ${DISK}p2
+            mkfs.btrfs ${DISK}p2
             mount ${DISK}p2 /mnt
             mkdir -p /mnt/boot/efi
             mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
-            mkfs.ext4 ${DISK}p1
+            mkfs.btrfs ${DISK}p1
             mount ${DISK}p1 /mnt
         fi
     else
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as EFI"
             mkfs.vfat -F32 ${DISK}1
-            mkfs.ext4 ${DISK}2
+            mkfs.btrfs ${DISK}2
             mount ${DISK}2 /mnt
             mkdir -p /mnt/boot/efi
             mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
-            mkfs.ext4 ${DISK}1
+            mkfs.btrfs ${DISK}1
             mount ${DISK}1 /mnt
         fi
     fi
@@ -181,7 +181,7 @@ else
     dumptitle="Citrine"
 
     while [[ "$CONFDONE" == "NOPE" ]]; do
-        dump "Press enter a shell. (ZSH)"
+        dump "Press enter to go to a shell. (ZSH)"
         zsh
         yesno "All set (and partitions mounted?)"
         echo "STAT=$yn"
@@ -340,21 +340,10 @@ arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
 if [[ "$DEP" == "0" ]]; then
     inf "--- Desktop Environments ---"
-    inf "- Budgie"
-    inf "- Cinnamon"
-    inf "- Deepin"
-    inf "- Enlightenment (note: very DIY. Read Arch Wiki)"
     inf "- GNOME"
-    # Flashback seems to need some work
-    #inf "- (GNOME) Flashback"
     inf "- KDE"
-    inf "- LXDE"
-    inf "- LXQt"
-    inf "- Mate"
-    inf "- Cutefish"
     inf "- Xfce"
-    inf "- UKUI (note: very poorly documented. In english, anyway)"
-    inf "(We'll add more as people ask)"
+    inf "- Budgie"
     inf "Please enter exactly as shown."
     prompt ""
     echo "DE=$response"
@@ -365,14 +354,6 @@ if [[ "$DEP" == "0" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
         DM="gdm"
         ;;
-    "Cinnamon" | "cinnamon")
-        arch-chroot /mnt pacman -S --quiet --noconfirm cinnamon
-        DM="gdm"
-        ;;
-    "Deepin" | "deepin")
-        arch-chroot /mnt pacman -S --quiet --noconfirm deepin deepin-extra
-        DM="lightdm"
-        ;;
     "Gnome" | "GNOME" | "gnome")
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
@@ -380,29 +361,9 @@ if [[ "$DEP" == "0" ]]; then
     "KDE" | "Kde" | "kde")
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
         DM="sddm"
-        ;;
-    "LXDE" | "lxde" | "Lxde")
-        arch-chroot /mnt pacman -S --quiet --noconfirm lxde
-        DM="lxdm"
-        ;;
-    "LXQt" | "lxqt" | "Lxqt" | "LXQT")
-        arch-chroot /mnt pacman -S --quiet --noconfirm lxqt breeze-icons xorg
-        DM="sddm"
-        ;;
-    "Mate" | "mate")
-        arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
-        DM="gdm"
-        ;;
     "Xfce" | "xfce")
         arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
         DM="sddm"
-        ;;
-    "Cutefish" | "cutefish")
-        arch-chroot /mnt pacman -S --quiet --noconfirm cutefish
-        DM="sddm"
-        ;;
-    "Enlightenment" | "enlightenment")
-        arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
         ;;
 esac
 
@@ -431,9 +392,6 @@ if [[ "$DM" != "" ]]; then
         useDM="$response"
         if [[ "$useDM" != "n" ]]; then
             arch-chroot /mnt systemctl enable ${DM}
-            if [[ "$DE" == "Deepin" ]]; then
-                sed -i 's/lightdm-gtk-greeter/lightdm-deepin-greeter/g' /mnt/etc/lightdm/lightdm.conf
-            fi
         fi
     fi
 fi
