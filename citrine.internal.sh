@@ -150,7 +150,7 @@ if [[ "$MANUAL" == "no" ]]; then
         else
             inf "Initializing ${DISK} as NVME MBR"
             mkfs.btrfs ${DISK}p1
-            mount ${DISK}1 /mnt
+            mount ${DISK}p1 /mnt
             cd /mnt
             btrfs subvolume create @
             btrfs subvolume create @home 
@@ -168,7 +168,7 @@ if [[ "$MANUAL" == "no" ]]; then
             inf "Initializing ${DISK} as EFI"
             mkfs.vfat -F32 ${DISK}1
             mkfs.btrfs ${DISK}2
-            mount ${DISK}1 /mnt
+            mount ${DISK}2 /mnt
             cd /mnt
             btrfs subvolume create @
             btrfs subvolume create @home 
