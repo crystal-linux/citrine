@@ -136,11 +136,31 @@ if [[ "$MANUAL" == "no" ]]; then
             mkfs.vfat ${DISK}p1
             mkfs.btrfs ${DISK}p2
             mount ${DISK}p2 /mnt
-            mkdir -p /mnt/boot/efi
+            cd /mnt
+            btrfs subvolume create @
+            btrfs subvolume create @home 
+            btrfs subvolume create @var
+            cd /
+            umount /mnt
+            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}p2 /mnt
+            mkdir -p /mnt/{home,var,boot/efi}
+            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}p2 /mnt/home
+            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}p2 /mnt/var
             mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
             mkfs.btrfs ${DISK}p1
+            mount ${DISK}1 /mnt
+            cd /mnt
+            btrfs subvolume create @
+            btrfs subvolume create @home 
+            btrfs subvolume create @var
+            cd /
+            umount /mnt
+            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}p1 /mnt
+            mkdir -p /mnt/{home,var}
+            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}p1 /mnt/home
+            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}p1 /mnt/var
             mount ${DISK}p1 /mnt
         fi
     else
@@ -148,13 +168,32 @@ if [[ "$MANUAL" == "no" ]]; then
             inf "Initializing ${DISK} as EFI"
             mkfs.vfat -F32 ${DISK}1
             mkfs.btrfs ${DISK}2
-            mount ${DISK}2 /mnt
-            mkdir -p /mnt/boot/efi
+            mount ${DISK}1 /mnt
+            cd /mnt
+            btrfs subvolume create @
+            btrfs subvolume create @home 
+            btrfs subvolume create @var
+            cd /
+            umount /mnt
+            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}2 /mnt
+            mkdir -p /mnt/{home,var,boot/efi}
+            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}2 /mnt/home
+            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}2 /mnt/var
             mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
             mkfs.btrfs ${DISK}1
             mount ${DISK}1 /mnt
+            cd /mnt
+            btrfs subvolume create @
+            btrfs subvolume create @home 
+            btrfs subvolume create @var
+            cd /
+            umount /mnt
+            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}1 /mnt
+            mkdir -p /mnt/{home,var}
+            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}1 /mnt/home
+            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}1 /mnt/var
         fi
     fi
 else
@@ -209,10 +248,10 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch
+    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs
 fi
 
 if [[ "$EFI" == "yes" ]]; then
