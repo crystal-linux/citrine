@@ -444,13 +444,13 @@ if [[ "$MP" != "n" ]]; then
         prompt "Write package names"
         PKGNS="$response"
         inf "Installing: $PKGNS"
-        arch-chroot /mnt su - ${UN} ame -S ${PKGNS}
+        arch-chroot /mnt su - ${UN} -c "ame -S ${PKGNS}"
     else 
         prompt "URL to package list"
         SRC="$response"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
-            arch-chroot /mnt su - ${UN} ame -S ${PKG}
+            arch-chroot /mnt su - ${UN} -c "ame -S ${PKG}"
         done
     fi
 fi
