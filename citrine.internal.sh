@@ -377,34 +377,79 @@ DEP="$yn"
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
+
 if [[ "$DEP" == "0" ]]; then
-    inf "--- Desktop Environments ---"
-    inf "- GNOME"
-    inf "- KDE"
-    inf "- Xfce"
-    inf "- Budgie"
-    inf "Please enter exactly as shown."
-    prompt ""
-    echo "DE=$response"
-    DE="$response"
-    DM=""
-    case "$DE" in 
-    "Budgie" | "budgie")
-        arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
-        DM="gdm"
-        ;;
-    "Gnome" | "GNOME" | "gnome")
+    #inf "--- Desktop Environments ---"
+    #inf "- GNOME"
+    #inf "- KDE"
+    #inf "- Xfce"
+    #inf "- Budgie"
+    #inf "Please enter exactly as shown."
+    #prompt ""
+    #echo "DE=$response"
+    #DE="$response"
+    #DM=""
+    #case "$DE" in 
+    #"Budgie" | "budgie")
+    #    arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
+    #    DM="gdm"
+    #    ;;
+    #"Gnome" | "GNOME" | "gnome")
+    #    arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
+    #    DM="gdm"
+    #    ;;
+    #"KDE" | "Kde" | "kde")
+    #    arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
+    #    DM="sddm"
+    #"Xfce" | "xfce")
+    #    arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
+    #    DM="sddm"
+    #    ;;
+    #esac
+    while [[ "$DE" == "" ]]; do
+        menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 3 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" --stdout)
+        if [[ "$menu" == "Official" ]]; then
+            DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Onyx" "Our custom Desktop Environment based on XFCE" "Onyx tiling" "Our custom Desktop Environment based on xfce but with i3 as the wm" --stdout)
+        elif [[ "$menu" == "Third Party (supported)" ]]; then
+            DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
+        elif [[ "$menu" == "Third Party (unsupported)" ]]; then
+            DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Pantheon" "The Pantheon desktop environment from elementaryos" "Enlightenment" "A very DIY desktop environment, refer to archwiki" --stdout)
+        fi
+    done
+    if [[ "$DE" == "Onyx" ]]; then
+        #arch-chroot /mnt pacman -S --quiet --noconfirm onyx
+        #DM="lightdm"
+        dumptitle="Desktop Environment"
+        dump "Onyx is not supported yet, please choose another DE"
+        DE=""
+    elif [[ "$DE" == "Onyx tiling" ]]; then
+        #arch-chroot /mnt pacman -S --quiet --noconfirm onyx-tiling
+        #DM="lightdm"
+        dumptitle="Desktop Environment"
+        dump "Onyx is not supported yet, please choose another DE"
+        DE=""
+    elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
-        ;;
-    "KDE" | "Kde" | "kde")
+    elif [[ "$DE" == "KDE" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
         DM="sddm"
-    "Xfce" | "xfce")
+    elif [[ "$DE" == "budgie" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
+        DM="gdm"
+    elif [[ "$DE" == "Mate" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
+        DM="gdm"
+    elif [[ "$DE" == "Pantheon" ]]; then
+        arch-chroot /mnt su - ${UN} -c "ame -S gala wingpanel pantheon-applications-menu plank pantheon-geoclue2-agent pantheon-polkit-agent pantheon-print pantheon-settings-daemon lightdm lightdm-pantheon-greeter pantheon-default-settings elementary-icon-theme elementary-wallpapers gtk-theme-elementary ttf-droid ttf-opensans ttf-roboto sound-theme-elementary capnet-assist epiphany pantheon-calculator pantheon-calendar pantheon-camera pantheon-code pantheon-files pantheon-mail pantheon-music pantheon-photos pantheon-screencast pantheon-shortcut-overlay pantheon-terminal pantheon-videos simple-scan pantheon-session pantheon switchboard-plugin-desktop" > /mnt/pantheon-packages.txt
+        DM="lightdm"
+    elif [[ "$DE" == "Enlightenment" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
+    elif [[ "$DE" == "Xfce" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
-        DM="sddm"
-        ;;
-esac
+        DM="lightdm"
+    fi
+fi
 
 if [[ "$DM" == "" ]]; then
     inf "Your selected DE/WM doesn't have a standard display manager. Enter one of the below names, or leave blank for none"
