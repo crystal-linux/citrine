@@ -480,12 +480,11 @@ else
     arch-chroot /mnt pacman -S --quiet --noconfirm $DM
 fi
 if [[ "$DM" != "" ]]; then
-        if [[ "$DM" != "none" ]]; then
-            prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
-            useDM="$response"
-            if [[ "$useDM" != "n" ]]; then
-                arch-chroot /mnt systemctl enable ${DM}
-            fi
+    if [[ "$DM" != "none" ]]; then
+        prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
+        useDM="$response"
+        if [[ "$useDM" != "n" ]]; then
+            arch-chroot /mnt systemctl enable ${DM}
         fi
     fi
 fi
