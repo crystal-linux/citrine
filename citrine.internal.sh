@@ -371,14 +371,14 @@ arch-chroot pacman-key --populate crystal
 
 clear
 
-yesno "Would you like to install a DE/WM profile?"
-echo "DEP=$yn"
-DEP="$yn"
+#yesno "Would you like to install a DE/WM profile?"
+#echo "DEP=$yn"
+#DEP="$yn"
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
 
-if [[ "$DEP" == "0" ]]; then
+#if [[ "$DEP" == "0" ]]; then
     #inf "--- Desktop Environments ---"
     #inf "- GNOME"
     #inf "- KDE"
@@ -407,13 +407,21 @@ if [[ "$DEP" == "0" ]]; then
     #    ;;
     #esac
     while [[ "$DE" == "" ]]; do
-        menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 3 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" --stdout)
+        menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" --stdout)
         if [[ "$menu" == "Official" ]]; then
             DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Onyx" "Our custom Desktop Environment based on XFCE" "Onyx tiling" "Our custom Desktop Environment based on xfce but with i3 as the wm" --stdout)
         elif [[ "$menu" == "Third Party (supported)" ]]; then
             DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
         elif [[ "$menu" == "Third Party (unsupported)" ]]; then
             DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Pantheon" "The Pantheon desktop environment from elementaryos" "Enlightenment" "A very DIY desktop environment, refer to archwiki" --stdout)
+        elif [[ "$menu" == "None/DIY" ]]; then
+            yesno "Are you sure that you dont want to install any DE?"
+            if [[ "$yn" == "0" ]]; then
+                DE="none"
+                DM="none"
+            else [[ "$yn" == "1" ]]
+                DE=""
+            fi
         fi
     done
     if [[ "$DE" == "Onyx" ]]; then
@@ -472,10 +480,12 @@ else
     arch-chroot /mnt pacman -S --quiet --noconfirm $DM
 fi
 if [[ "$DM" != "" ]]; then
-        prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
-        useDM="$response"
-        if [[ "$useDM" != "n" ]]; then
-            arch-chroot /mnt systemctl enable ${DM}
+        if [[ "$DM" != "none" ]]; then
+            prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
+            useDM="$response"
+            if [[ "$useDM" != "n" ]]; then
+                arch-chroot /mnt systemctl enable ${DM}
+            fi
         fi
     fi
 fi
