@@ -477,7 +477,9 @@ if [[ "$DM" == "" ]]; then
         inf "Ok, not installing a display manager."
     fi
 else
-    arch-chroot /mnt pacman -S --quiet --noconfirm $DM
+    if [[ "$DM" == "none "]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm $DM
+    fi
 fi
 if [[ "$DM" != "" ]]; then
     if [[ "$DM" != "none" ]]; then
