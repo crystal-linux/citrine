@@ -457,7 +457,7 @@ arch-chroot /mnt pacman -Sy --quiet --noconfirm
         arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
         DM="lightdm"
     fi
-fi
+#fi
 
 if [[ "$DM" == "" ]]; then
     inf "Your selected DE/WM doesn't have a standard display manager. Enter one of the below names, or leave blank for none"
