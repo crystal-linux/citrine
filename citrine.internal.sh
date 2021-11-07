@@ -134,7 +134,7 @@ if [[ "$MANUAL" == "no" ]]; then
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as NVME EFI"
             mkfs.vfat ${DISK}p1
-            mkfs.btrfs ${DISK}p2
+            mkfs.btrfs -f ${DISK}p2
             mount ${DISK}p2 /mnt
             cd /mnt
             btrfs subvolume create @
@@ -149,7 +149,7 @@ if [[ "$MANUAL" == "no" ]]; then
             mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
-            mkfs.btrfs ${DISK}p1
+            mkfs.btrfs -f ${DISK}p1
             mount ${DISK}p1 /mnt
             cd /mnt
             btrfs subvolume create @
@@ -167,7 +167,7 @@ if [[ "$MANUAL" == "no" ]]; then
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as EFI"
             mkfs.vfat -F32 ${DISK}1
-            mkfs.btrfs ${DISK}2
+            mkfs.btrfs -f ${DISK}2
             mount ${DISK}2 /mnt
             cd /mnt
             btrfs subvolume create @
@@ -182,7 +182,7 @@ if [[ "$MANUAL" == "no" ]]; then
             mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
-            mkfs.btrfs ${DISK}1
+            mkfs.btrfs -f ${DISK}1
             mount ${DISK}1 /mnt
             cd /mnt
             btrfs subvolume create @
