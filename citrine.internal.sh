@@ -407,7 +407,7 @@ arch-chroot /mnt pacman -Sy --quiet --noconfirm
     #    ;;
     #esac
     while [[ "$DE" == "" ]]; do
-        menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" --stdout)
+        menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
         if [[ "$menu" == "Official" ]]; then
             DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Onyx" "Our custom Desktop Environment based on XFCE" "Onyx tiling" "Our custom Desktop Environment based on xfce but with i3 as the wm" --stdout)
         elif [[ "$menu" == "Third Party (supported)" ]]; then
