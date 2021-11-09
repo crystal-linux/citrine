@@ -142,10 +142,10 @@ if [[ "$MANUAL" == "no" ]]; then
             btrfs subvolume create @var
             cd /
             umount /mnt
-            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}p2 /mnt
+            mount -o noatime,compress=zstd,subvol=@ ${DISK}p2 /mnt
             mkdir -p /mnt/{home,var,boot/efi}
-            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}p2 /mnt/home
-            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}p2 /mnt/var
+            mount -o noatime,compress=zstd,subvol=@home ${DISK}p2 /mnt/home
+            mount -o noatime,compress=zstd,subvol=@var ${DISK}p2 /mnt/var
             mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
@@ -157,10 +157,10 @@ if [[ "$MANUAL" == "no" ]]; then
             btrfs subvolume create @var
             cd /
             umount /mnt
-            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}p1 /mnt
+            mount -o noatime,compress=zstd,subvol=@ ${DISK}p1 /mnt
             mkdir -p /mnt/{home,var}
-            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}p1 /mnt/home
-            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}p1 /mnt/var
+            mount -o noatime,compress=zstd,subvol=@home ${DISK}p1 /mnt/home
+            mount -o noatime,compress=zstd,subvol=@var ${DISK}p1 /mnt/var
             mount ${DISK}p1 /mnt
         fi
     else
@@ -175,10 +175,10 @@ if [[ "$MANUAL" == "no" ]]; then
             btrfs subvolume create @var
             cd /
             umount /mnt
-            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}2 /mnt
+            mount -o noatime,compress=zstd,subvol=@ ${DISK}2 /mnt
             mkdir -p /mnt/{home,var,boot/efi}
-            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}2 /mnt/home
-            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}2 /mnt/var
+            mount -o noatime,compress=zstd,subvol=@home ${DISK}2 /mnt/home
+            mount -o noatime,compress=zstd,subvol=@var ${DISK}2 /mnt/var
             mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
@@ -190,10 +190,10 @@ if [[ "$MANUAL" == "no" ]]; then
             btrfs subvolume create @var
             cd /
             umount /mnt
-            mount -o noatime,compress=zstd,space_cache,subvol=@ ${DISK}1 /mnt
+            mount -o noatime,compress=zstd,subvol=@ ${DISK}1 /mnt
             mkdir -p /mnt/{home,var}
-            mount -o noatime,compress=zstd,space_cache,subvol=@home ${DISK}1 /mnt/home
-            mount -o noatime,compress=zstd,space_cache,subvol=@var ${DISK}1 /mnt/var
+            mount -o noatime,compress=zstd,subvol=@home ${DISK}1 /mnt/home
+            mount -o noatime,compress=zstd,subvol=@var ${DISK}1 /mnt/var
         fi
     fi
 else
