@@ -121,6 +121,7 @@ done
 echo >> /etc/sudoers
 echo "# Enabled by Crystalinstall" >> /etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+echo "Defaults pwfeedback" >> /etc/sudoers
 
 echo >> /etc/sudoers
 echo "# Enabled by Crystalinstall" >> /etc/sudoers
