@@ -419,7 +419,7 @@ arch-chroot /mnt pacman -Sy --quiet --noconfirm
             if [[ "$yn" == "0" ]]; then
                 DE="none"
                 DM="none"
-            else [[ "$yn" == "1" ]]
+            else
                 DE=""
             fi
         fi
