@@ -126,7 +126,8 @@ if [[ "$MANUAL" == "no" ]]; then
         inf "Partitioned ${DISK} as an EFI volume"
     else
         parted ${DISK} mklabel msdos --script
-        parted ${DISK} mkpart primary ext4 0% 100% --script
+        parted ${DISK} mkpart primary ext4 512MIB 100% --script
+        parted ${DISK} mkpart primary fat32 1MIB 512MIB --script
         inf "Partitioned ${DISK} as an MBR volume"
     fi
 
@@ -141,7 +142,16 @@ if [[ "$MANUAL" == "no" ]]; then
         else
             inf "Initializing ${DISK} as NVME MBR"
             mkfs.btrfs -f ${DISK}p1
-            mount ${DISK}p1 /mnt
+            mount ${DISK}1 /mnt
+            cd /mnt
+            btrfs subvolume create @
+            btrfs subvolume create @home 
+            cd /
+            umount /mnt
+            mount -o noatime,subvol=@ ${DISK}p1 /mnt
+            mkdir -p /mnt/{home,boot}
+            mount -o noatime,subvol=@home ${DISK}p1 /mnt/home
+            mount ${DISK}p2 /mnt/boot
         fi
     else
         if [[ "$EFI" == "yes" ]]; then
@@ -158,13 +168,12 @@ if [[ "$MANUAL" == "no" ]]; then
             cd /mnt
             btrfs subvolume create @
             btrfs subvolume create @home 
-            btrfs subvolume create @var
             cd /
             umount /mnt
-            mount -o noatime,compress=zstd,subvol=@ ${DISK}1 /mnt
-            mkdir -p /mnt/{home,var}
-            mount -o noatime,compress=zstd,subvol=@home ${DISK}1 /mnt/home
-            mount -o noatime,compress=zstd,subvol=@var ${DISK}1 /mnt/var
+            mount -o noatime,subvol=@ ${DISK}1 /mnt
+            mkdir -p /mnt/{home,boot}
+            mount -o noatime,subvol=@home ${DISK}1 /mnt/home
+            mount ${DISK}2 /mnt/boot
         fi
     fi
 else
