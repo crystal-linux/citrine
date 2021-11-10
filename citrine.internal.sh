@@ -253,6 +253,17 @@ while [[ ! -f $TZ ]]; do
     TZ="/usr/share/zoneinfo/${PT}"
 done
 
+#var=$(ls /usr/share/zoneinfo/ | sed 's/ /" "" "/g')
+#var=$(echo $var | sed 's/ /" "" "/g')
+#var=$(echo \"$var\")
+#loc1=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var "" --stdout)
+
+#var1=$(ls /usr/share/zoneinfo/$loc1 | sed 's/ /" "" "/g')
+#var1=$(echo $var1 | sed 's/ /" "" "/g')
+#var1=$(echo \"$var1\")
+#loc2=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var1 "" --stdout)
+#TZ="/usr/share/zoneinfo/$loc1/$loc2"
+
 arch-chroot /mnt ln-sf $TZ /etc/localtime
 inf "Set TZ to ${TZ}"
 inf "Syncing hardware offset"
