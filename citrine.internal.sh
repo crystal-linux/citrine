@@ -126,8 +126,8 @@ if [[ "$MANUAL" == "no" ]]; then
         inf "Partitioned ${DISK} as an EFI volume"
     else
         parted ${DISK} mklabel msdos --script
-        parted ${DISK} mkpart primary ext4 512MIB 100% --script
-        parted ${DISK} mkpart primary fat32 1MIB 512MIB --script
+        parted ${DISK} mkpart primary btrfs 512MIB 100% --script
+        parted ${DISK} mkpart primary ext4 1MIB 512MIB --script
         inf "Partitioned ${DISK} as an MBR volume"
     fi
 
