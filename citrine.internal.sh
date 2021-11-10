@@ -228,10 +228,10 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs timeshift timeshift-autosnap
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs
+    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs timeshift timeshift-autosnap
 fi
 
 if [[ "$EFI" == "yes" ]]; then
@@ -460,5 +460,8 @@ if [[ "$MP" != "n" ]]; then
         done
     fi
 fi
+
+inf "setting up timeshift"
+arch-chroot /mnt timeshift --btrfs
 
 inf "Installation should now be complete."
