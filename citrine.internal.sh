@@ -267,7 +267,7 @@ done
 #TZ="/usr/share/zoneinfo/$loc1/$loc2"
 #cd /
 
-arch-chroot /mnt ln-sf $TZ /etc/localtime
+arch-chroot /mnt ln -sf $TZ /etc/localtime
 inf "Set TZ to ${TZ}"
 inf "Syncing hardware offset"
 arch-chroot /mnt hwclock --systohc
