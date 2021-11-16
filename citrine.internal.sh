@@ -365,7 +365,7 @@ echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 if [[ "$EFI" == "yes" ]]; then
     root="$(findmnt -n -o SOURCE /mnt/ | awk 'BEGIN { FS = "/" }; { print $3 }')"
     arch-chroot /mnt refind-install
-    echo '"Crystal Linux"          "rw root=/dev/placeholder"' > /mnt/boot/refind_linux.conf
+    echo '"Crystal Linux"          "rw root=/dev/placeholder rootflags=subvol=@"' > /mnt/boot/refind_linux.conf
     sed -i "s/placeholder/$root/" /mnt/boot/refind_linux.conf
 else 
     arch-chroot /mnt curl https://git.getcryst.al/crystal/Syslinux_install_script/raw/branch/master/syslinux-install_update -o /usr/bin/syslinux-install_update
