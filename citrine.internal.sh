@@ -363,7 +363,7 @@ echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
 if [[ "$EFI" == "yes" ]]; then
-    root="$(findmnt -n -o SOURCE /mnt/ | awk 'BEGIN { FS = "/" }; { print $3 }')"
+    root="$(findmnt -n -o SOURCE / | awk 'BEGIN { FS = "/" }; { print $3 }' | sed "s/\[//")"
     arch-chroot /mnt refind-install
     echo '"Crystal Linux"          "rw root=/dev/placeholder rootflags=subvol=@"' > /mnt/boot/refind_linux.conf
     sed -i "s/placeholder/$root/" /mnt/boot/refind_linux.conf
@@ -402,40 +402,40 @@ while [[ "$DE" == "" ]]; do
             DE=""
         fi
     fi
+    if [[ "$DE" == "Onyx" ]]; then
+        #arch-chroot /mnt pacman -S --quiet --noconfirm onyx
+        #DM="lightdm"
+        dumptitle="Desktop Environment"
+        dump "Onyx is not supported yet, please choose another DE"
+        DE=""
+    elif [[ "$DE" == "Onyx tiling" ]]; then
+        #arch-chroot /mnt pacman -S --quiet --noconfirm onyx-tiling
+        #DM="lightdm"
+        dumptitle="Desktop Environment"
+        dump "Onyx is not supported yet, please choose another DE"
+        DE=""
+    elif [[ "$DE" == "Gnome" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
+        DM="gdm"
+    elif [[ "$DE" == "KDE" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
+        DM="sddm"
+    elif [[ "$DE" == "budgie" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
+        DM="gdm"
+    elif [[ "$DE" == "Mate" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
+        DM="gdm"
+    elif [[ "$DE" == "Pantheon" ]]; then
+        arch-chroot /mnt su - ${UN} -c "ame -S gala wingpanel pantheon-applications-menu plank pantheon-geoclue2-agent pantheon-polkit-agent pantheon-print pantheon-settings-daemon lightdm lightdm-pantheon-greeter pantheon-default-settings elementary-icon-theme elementary-wallpapers gtk-theme-elementary ttf-droid ttf-opensans ttf-roboto sound-theme-elementary capnet-assist epiphany pantheon-calculator pantheon-calendar pantheon-camera pantheon-code pantheon-files pantheon-mail pantheon-music pantheon-photos pantheon-screencast pantheon-shortcut-overlay pantheon-terminal pantheon-videos simple-scan pantheon-session pantheon switchboard-plugin-desktop" > /mnt/pantheon-packages.txt
+        DM="lightdm"
+    elif [[ "$DE" == "Enlightenment" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
+    elif [[ "$DE" == "Xfce" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
+        DM="lightdm"
+    fi
 done
-if [[ "$DE" == "Onyx" ]]; then
-    #arch-chroot /mnt pacman -S --quiet --noconfirm onyx
-    #DM="lightdm"
-    dumptitle="Desktop Environment"
-    dump "Onyx is not supported yet, please choose another DE"
-    DE=""
-elif [[ "$DE" == "Onyx tiling" ]]; then
-    #arch-chroot /mnt pacman -S --quiet --noconfirm onyx-tiling
-    #DM="lightdm"
-    dumptitle="Desktop Environment"
-    dump "Onyx is not supported yet, please choose another DE"
-    DE=""
-elif [[ "$DE" == "Gnome" ]]; then
-    arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
-    DM="gdm"
-elif [[ "$DE" == "KDE" ]]; then
-    arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
-    DM="sddm"
-elif [[ "$DE" == "budgie" ]]; then
-    arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
-    DM="gdm"
-elif [[ "$DE" == "Mate" ]]; then
-    arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
-    DM="gdm"
-elif [[ "$DE" == "Pantheon" ]]; then
-    arch-chroot /mnt su - ${UN} -c "ame -S gala wingpanel pantheon-applications-menu plank pantheon-geoclue2-agent pantheon-polkit-agent pantheon-print pantheon-settings-daemon lightdm lightdm-pantheon-greeter pantheon-default-settings elementary-icon-theme elementary-wallpapers gtk-theme-elementary ttf-droid ttf-opensans ttf-roboto sound-theme-elementary capnet-assist epiphany pantheon-calculator pantheon-calendar pantheon-camera pantheon-code pantheon-files pantheon-mail pantheon-music pantheon-photos pantheon-screencast pantheon-shortcut-overlay pantheon-terminal pantheon-videos simple-scan pantheon-session pantheon switchboard-plugin-desktop" > /mnt/pantheon-packages.txt
-    DM="lightdm"
-elif [[ "$DE" == "Enlightenment" ]]; then
-    arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
-elif [[ "$DE" == "Xfce" ]]; then
-    arch-chroot /mnt pacman -S --quiet --noconfirm xfce4 xfce4-goodies
-    DM="lightdm"
-fi
 
 if [[ "$DM" == "" ]]; then
     inf "Your selected DE/WM doesn't have a standard display manager. Enter one of the below names, or leave blank for none"
