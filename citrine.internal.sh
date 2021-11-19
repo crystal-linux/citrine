@@ -30,6 +30,11 @@ msgdat=""
 msgbox(){
     msgdat=$(dialog --title Citrine --inputbox "$@" --stdout 10 80)
 }
+
+pass=""
+passbox(){
+    pass=$(dialog --title Citrine --insecure --passwordbox "$@" --stdout 10 80)
+}
 # --------------------------
 
 if [[ "$EUID" != "0" ]]; then
@@ -260,26 +265,18 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 clear
 
-TZ="/usr/share/place/holder"
-while [[ ! -f $TZ ]]; do 
-    msgbox "Pick a time zone (Format: America/New_York, Europe/London, etc)"
-    PT="$msgdat"
-    TZ="/usr/share/zoneinfo/${PT}"
-done
-
-
-#cd /usr/share/zoneinfo/
-#var=$(echo */ | sed 's/\///g' | sed 's/ /" "" "/g')
-#var=$(echo \"$var\")
-#loc1=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var "" --stdout)
-#loc1=$(echo $loc1 | sed 's/"//g')
-#cd /usr/share/zoneinfo/$loc1
-#var1=$(echo * | sed 's/\///g' | sed 's/ /" "" "/g')
-#var1=$(echo \"$var1\")
-#loc2=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var1 "" --stdout)
-#loc2=$(echo $loc1 | sed 's/"//g')
-#TZ="/usr/share/zoneinfo/$loc1/$loc2"
-#cd /
+cd /usr/share/zoneinfo/
+var=$(echo */ | sed 's/\///g' | sed 's/ /" "" "/g')
+var=$(echo \"$var\")
+loc1=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var "" --stdout)
+loc1=$(echo $loc1 | sed 's/"//g')
+cd /usr/share/zoneinfo/$loc1
+var1=$(echo * | sed 's/\///g' | sed 's/ /" "" "/g')
+var1=$(echo \"$var1\")
+loc2=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var1 "" --stdout)
+loc2=$(echo $loc1 | sed 's/"//g')
+TZ="/usr/share/zoneinfo/$loc1/$loc2"
+cd /
 
 arch-chroot /mnt ln -sf $TZ /etc/localtime
 inf "Set TZ to ${TZ}"
@@ -345,6 +342,19 @@ while [[ "$done" == "nope" ]]; do
         done="yep"
     fi
 done
+while [[ "$done" == "nope" ]]; do
+    passbox "Please enter root password"
+    passInit="$pass"
+    passbox "Please confirm root password"
+    passConf="$pass"
+    if [[ "$passInit" == "$passConf" ]]; then
+        done="yep"
+    else 
+        dumptitle "Password error"
+        dump "Passwords do not match. Please try again."
+    fi
+done
+arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) ${UN}
 
 msgbox "Your username"
 UN="$msgdat"
@@ -353,11 +363,19 @@ arch-chroot /mnt usermod -aG wheel ${UN}
 inf "Set password for ${UN}"
 done="nope"
 while [[ "$done" == "nope" ]]; do
-    arch-chroot /mnt passwd ${UN}
-    if [[ "$(echo $?)" == "0" ]]; then
+    passbox "Please enter password for ${UN}"
+    passInit="$pass"
+    passbox "Please confirm password for ${UN}"
+    passConf="$pass"
+    if [[ "$passInit" == "$passConf" ]]; then
         done="yep"
+    else 
+        dumptitle "Password error"
+        dump "Passwords do not match. Please try again."
     fi
 done
+arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) ${UN}
+
 echo >> /mnt/etc/sudoers
 echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
@@ -447,7 +465,10 @@ if [[ "$DM" == "" ]]; then
     prompt ""
     ND="$response"
     echo "ND=$ND"
-    if [[ "$ND" != "" ]]; then
+    if [[ "$ND" == "blank" || "$ND" == "none" || "$ND" == "" ]]; then
+        inf "Ok, we will skip the DM install"
+        DM=""
+    else
         inf "Ok, we'll install $ND"
         DM="$ND"
         arch-chroot /mnt pacman -S --quiet --noconfirm $DM
@@ -455,7 +476,7 @@ if [[ "$DM" == "" ]]; then
         inf "Ok, not installing a display manager."
     fi
 else
-    if [[ "$DM" == "none" ]]; then
+    if [[ "$DM" != "none" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm $DM
     fi
 fi
