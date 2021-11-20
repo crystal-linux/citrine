@@ -254,7 +254,7 @@ if [[ ! "$?" == "0" ]]; then
 fi
 
 if [[ "$EFI" == "yes" ]]; then
-    inf "Installing EFI support package"
+    inf "Installing EFI support packages"
     crystalstrap /mnt efibootmgr refind
 else 
     inf "Installing Syslinux bootloader"
@@ -397,10 +397,6 @@ arch-chroot pacman-key --populate crystal
 
 clear
 
-#yesno "Would you like to install a DE/WM profile?"
-#echo "DEP=$yn"
-#DEP="$yn"
-
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
 while [[ "$DE" == "" ]]; do
@@ -472,14 +468,13 @@ if [[ "$DM" == "" ]]; then
         inf "Ok, we'll install $ND"
         DM="$ND"
         arch-chroot /mnt pacman -S --quiet --noconfirm $DM
-            else
-        inf "Ok, not installing a display manager."
     fi
 else
     if [[ "$DM" != "none" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm $DM
     fi
 fi
+
 if [[ "$DM" != "" ]]; then
     if [[ "$DM" != "none" ]]; then
         prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
