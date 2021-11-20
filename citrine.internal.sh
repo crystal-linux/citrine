@@ -337,12 +337,6 @@ clear
 inf "Set a password for root"
 done="nope"
 while [[ "$done" == "nope" ]]; do
-    arch-chroot /mnt passwd
-    if [[ "$(echo $?)" == "0" ]]; then
-        done="yep"
-    fi
-done
-while [[ "$done" == "nope" ]]; do
     passbox "Please enter root password"
     passInit="$pass"
     passbox "Please confirm root password"
