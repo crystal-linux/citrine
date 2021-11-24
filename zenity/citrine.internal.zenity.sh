@@ -381,6 +381,9 @@ if [[ "$EFI" == "yes" ]]; then
     sed -i "s/placeholder/$root/" /mnt/boot/refind_linux.conf
 else 
     arch-chroot /mnt curl https://git.getcryst.al/crystal/Syslinux_install_script/raw/branch/master/syslinux-install_update -o /usr/bin/syslinux-install_update
+    if [[ "$MANUAL" == "yes" ]]; then
+        touch /mnt/isManual.yes
+    fi
     arch-chroot /mnt syslinux-install_update -i -a -m
 fi
 
