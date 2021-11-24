@@ -499,7 +499,9 @@ if [[ "$MP" != "n" ]]; then
     fi
 fi
 
-inf "setting up timeshift"
-arch-chroot /mnt timeshift --btrfs
+if [[ "$MANUAL" == "yes"]]; then
+    inf "setting up timeshift"
+    arch-chroot /mnt timeshift --btrfs
+fi
 
 inf "Installation should now be complete."
