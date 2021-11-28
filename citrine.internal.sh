@@ -147,9 +147,9 @@ if [[ "$MANUAL" == "no" ]]; then
             btrfs subvolume create @home
             cd /
             umount /mnt
-            mount -o subvol=@ /dev/${DISK}p2 /mnt
+            mount -o subvol=@ ${DISK}p2 /mnt
             mkdir -p /mnt/{boot/efi,home}
-            mount -o subvol=@home /dev/${DISK}p2 /mnt/home
+            mount -o subvol=@home ${DISK}p2 /mnt/home
             mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
