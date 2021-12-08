@@ -53,18 +53,9 @@ echo "KBD=$KBD"
 
 # TODO: layout select in dialog
 if [[ "$KBD" == "0" || "$KBD" == "0" ]]; then
-    prompt "We're going to show the list of keymaps in less. Do you know how to exit less? (Y/n)"
-    UL="$response"
-    if [[ "$UL" == "n" ]]; then
-        inf "Once we enter less, use arrows to scroll, and q to quit once you've found the right file."
-        inf "Press enter to go"
-        read
-    fi
-    localectl list-keymaps
-    prompt "Correct keymap"
-    KMP="$response"
-    echo "KMP=$response"
-    loadkeys ${KMP}
+    keymaps=$(localectl list-keymaps | tr '\n' ' ' | sed 's/ /" "" "/g')
+    keymap=$(dialog --title "Citrine" --menu "Select your keyboard layout" 10 80 0 $keymaps "" --stdout)
+
 fi
 
 clear
