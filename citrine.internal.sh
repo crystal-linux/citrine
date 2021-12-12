@@ -167,9 +167,9 @@ if [[ "$MANUAL" == "no" ]]; then
             btrfs subvolume create @home
             cd /
             umount /mnt
-            mount -o subvol=@ /dev/${DISK}2 /mnt
+            mount -o subvol=@ ${DISK}2 /mnt
             mkdir -p /mnt/{boot/efi,home}
-            mount -o subvol=@home /dev/${DISK}2 /mnt/home
+            mount -o subvol=@home ${DISK}2 /mnt/home
             mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
