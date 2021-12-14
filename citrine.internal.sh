@@ -118,7 +118,7 @@ if [[ "$MANUAL" == "no" ]]; then
     if [[ "$EFI" == "yes" ]]; then
         parted ${DISK} mklabel gpt --script
         parted ${DISK} mkpart fat32 0 300 --script
-        parted ${DISK} mkpart ext4 300 100% --script
+        parted ${DISK} mkpart btrfs 300 100% --script
         inf "Partitioned ${DISK} as an EFI volume"
     else
         parted ${DISK} mklabel msdos --script
@@ -174,6 +174,7 @@ if [[ "$MANUAL" == "no" ]]; then
         else
             inf "Initializing ${DISK} as MBR"
             mkfs.btrfs -f ${DISK}1
+            mkfs.ext4 ${DISK}2
             mount ${DISK}1 /mnt
             cd /mnt
             btrfs subvolume create @
