@@ -51,7 +51,6 @@ yesno "Do you need a keyboard layout other than QWERTY US?"
 KBD="$yn"
 echo "KBD=$KBD"
 
-# TODO: layout select in dialog
 if [[ "$KBD" == "0" || "$KBD" == "0" ]]; then
     keymaps=$(localectl list-keymaps | tr '\n' ' ' | sed 's/ /" "" "/g')
     keymap=$(dialog --title "Citrine" --menu "Select your keyboard layout" 10 80 0 $keymaps "" --stdout)
@@ -285,16 +284,10 @@ More="$yn"
 
 if [[ "$MORE" == "0" ]]; then
     msgbox "Preferred editor"
-    PRGRM="$msgdat"
-    echo "PGRM=$msgdat"
-    if [[ -x "$(command -v ${PGRM})" ]]; then
-        inf "Attempting to install ${PGRM}"
-        pacman -S ${PGRM} --noconfirm
-    fi
     dumptitle="Read carefully."
     dump "When we open the file, please remove the leading # before any locales you need.\
     Then, save and exit."
-    ${PGRM} /mnt/etc/locale.gen
+    nano /mnt/etc/locale.gen
 fi
 
 inf "Generating selected locales."
@@ -344,8 +337,7 @@ arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) $
 
 msgbox "Your username"
 UN="$msgdat"
-arch-chroot /mnt useradd -m ${UN}
-arch-chroot /mnt usermod -aG wheel ${UN}
+arch-chroot /mnt useradd -m -G wheel -s /bin/bash ${UN}
 inf "Set password for ${UN}"
 done="nope"
 while [[ "$done" == "nope" ]]; do
@@ -384,6 +376,7 @@ arch-chroot pacman-key --populate crystal
 clear
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
+mkdir -p /mnt/home/${UN}/.local/share/
 
 while [[ "$DE" == "" ]]; do
     menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
