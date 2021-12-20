@@ -8,10 +8,10 @@ err() {
     echo -e "\e[1m\e[31m✗ $@\e[0m"
 }
 
-response=""
-prompt() {
+yn=""
+yesno() {
     printf "\e[1m\e[33m$@ : \e[0m"
-    read response
+    read yn
 }
 
 # ---------------------------------
@@ -298,7 +298,7 @@ echo
 inf "en_US was set as system primary."
 inf "After install, you can edit /etc/locale.conf to change the primary if desired."
 inf "Press enter"
-prompt ""
+yesno ""
 
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     echo "KEYMAP=${KMP}" > /mnt/etc/vconsole.conf
@@ -437,8 +437,8 @@ if [[ "$DM" == "" ]]; then
     inf "- lightdm (you'll need a greeter package. See Arch Wiki)"
     inf "- (you can type another Arch package name if you have one in mind)"
     inf "- [blank] for none"
-    prompt ""
-    ND="$response"
+    yesno ""
+    ND="$yn"
     echo "ND=$ND"
     if [[ "$ND" == "blank" || "$ND" == "none" || "$ND" == "" ]]; then
         inf "Ok, we will skip the DM install"
@@ -456,27 +456,43 @@ fi
 
 if [[ "$DM" != "" ]]; then
     if [[ "$DM" != "none" ]]; then
-        prompt "Would you like to enable ${DM} for ${DE}? (Y/n)"
-        useDM="$response"
+        yesno "Would you like to enable ${DM} for ${DE}? (Y/n)"
+        useDM="$yn"
         if [[ "$useDM" != "n" ]]; then
             arch-chroot /mnt systemctl enable ${DM}
         fi
     fi
 fi
 
-prompt "Would you like to add more packages? (Y/n)"
-MP="$response"
+yesno "Would you like to install flatpak?"
+flatpak="$yn"
+if [[ "$flatpak" == "y" ]]; then
+    yesno "Would you like to use a gui flatpak store?"
+    if [[ "$yn" == "y" ]]; then
+        DE=$(dialog --title "Citrine" --menu "Please choose the Store you want to install" 12 100 2 "Gnome Software" "The software store made by gnome (recommended for GTK desktops)" "Discover" "The software store made by KDE (recommended for QT desktops)" --stdout)
+        if [[ "$DE" == "Gnome Software" ]]; then
+            arch-chroot /mnt pacman -S --quiet --noconfirm gnome-software gnome-software-packagekit-plugin
+        elif [[ "$DE" == "Discover" ]]; then
+            arch-chroot /mnt pacman -S --quiet --noconfirm discover
+        fi
+    fi
+    arch-chroot /mnt pacman -S --quiet --noconfirm flatpak
+    arch-chroot /mnt su - ${UN} -c "flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo"
+fi
+
+yesno "Would you like to add more packages? (Y/n)"
+MP="$yn"
 if [[ "$MP" != "n" ]]; then
-    prompt "Would you like to use a URL to a package list? (Y/n)"
-    OL="$response"
+    yesno "Would you like to use a URL to a package list? (Y/n)"
+    OL="$yn"
     if [[ "$OL" == "n" ]]; then
-        prompt "Write package names"
-        PKGNS="$response"
+        yesno "Write package names"
+        PKGNS="$yn"
         inf "Installing: $PKGNS"
         arch-chroot /mnt su - ${UN} -c "ame -S ${PKGNS}"
     else 
-        prompt "URL to package list"
-        SRC="$response"
+        yesno "URL to package list"
+        SRC="$yn"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
             arch-chroot /mnt su - ${UN} -c "ame -S ${PKG}"
