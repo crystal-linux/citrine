@@ -295,10 +295,8 @@ arch-chroot /mnt locale-gen
 
 echo
 echo
-inf "en_US was set as system primary."
-inf "After install, you can edit /etc/locale.conf to change the primary if desired."
-inf "Press enter"
-yesno ""
+dumptitle "locale"
+dump "en_US was set as system primary.\nAfter install, you can edit /etc/locale.conf to change the primary if desired."
 
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
     echo "KEYMAP=${KMP}" > /mnt/etc/vconsole.conf
@@ -376,7 +374,7 @@ arch-chroot pacman-key --populate crystal
 clear
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
-mkdir -p /mnt/home/${UN}/.local/share/
+arch-chroot su - ${UN} -c "mkdir -p /mnt/home/${UN}/.local/share/"
 
 while [[ "$DE" == "" ]]; do
     menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
