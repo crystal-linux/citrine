@@ -51,7 +51,7 @@ yesno "Do you need a keyboard layout other than QWERTY US?"
 KBD="$yn"
 echo "KBD=$KBD"
 
-if [[ "$KBD" == "0" || "$KBD" == "0" ]]; then
+if [[ "$KBD" == "0" ]]; then
     keymaps=$(localectl list-keymaps | tr '\n' ' ' | sed 's/ /" "" "/g')
     keymap=$(dialog --title "Citrine" --menu "Select your keyboard layout" 10 80 0 $keymaps "" --stdout)
 
