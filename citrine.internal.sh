@@ -458,7 +458,7 @@ if [[ "$DM" != "" ]]; then
     if [[ "$DM" != "none" ]]; then
         yesno "Would you like to enable ${DM} for ${DE}? (Y/n)"
         useDM="$yn"
-        if [[ "$useDM" != "n" ]]; then
+        if [[ "$useDM" != "1" ]]; then
             arch-chroot /mnt systemctl enable ${DM}
         fi
     fi
@@ -466,9 +466,9 @@ fi
 
 yesno "Would you like to install flatpak?"
 flatpak="$yn"
-if [[ "$flatpak" == "y" ]]; then
+if [[ "$flatpak" == "0" ]]; then
     yesno "Would you like to use a gui flatpak store?"
-    if [[ "$yn" == "y" ]]; then
+    if [[ "$yn" == "0" ]]; then
         DE=$(dialog --title "Citrine" --menu "Please choose the Store you want to install" 12 100 2 "Gnome Software" "The software store made by gnome (recommended for GTK desktops)" "Discover" "The software store made by KDE (recommended for QT desktops)" --stdout)
         if [[ "$DE" == "Gnome Software" ]]; then
             arch-chroot /mnt pacman -S --quiet --noconfirm gnome-software gnome-software-packagekit-plugin
@@ -482,10 +482,10 @@ fi
 
 yesno "Would you like to add more packages? (Y/n)"
 MP="$yn"
-if [[ "$MP" != "n" ]]; then
+if [[ "$MP" != "1" ]]; then
     yesno "Would you like to use a URL to a package list? (Y/n)"
     OL="$yn"
-    if [[ "$OL" == "n" ]]; then
+    if [[ "$OL" == "1" ]]; then
         yesno "Write package names"
         PKGNS="$yn"
         inf "Installing: $PKGNS"
