@@ -227,7 +227,7 @@ else
 fi
 
 inf "Verifying network connection"
-ping -c 1 getcryst.al
+ping -c 1 ginp.archlinux.org
 
 if [[ ! "$?" == "0" ]]; then
     dumptitle="Error!"
