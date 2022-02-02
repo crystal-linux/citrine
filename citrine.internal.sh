@@ -227,7 +227,7 @@ else
 fi
 
 inf "Verifying network connection"
-ping -c 1 getcryst.al
+ping -c 1 ginp.archlinux.org
 
 if [[ ! "$?" == "0" ]]; then
     dumptitle="Error!"
@@ -246,10 +246,10 @@ fi
 
 if [[ "$EFI" == "yes" ]]; then
     inf "Installing EFI support packages"
-    crystalstrap /mnt efibootmgr refind
+    crystalstrap /mnt efibootmgr grub
 else 
     inf "Installing Syslinux bootloader"
-    crystalstrap /mnt syslinux
+    crystalstrap /mnt grub
 fi
 
 genfstab -U /mnt > /mnt/etc/fstab
@@ -357,14 +357,12 @@ echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 
 if [[ "$EFI" == "yes" ]]; then
-    root="$(findmnt -n -o SOURCE /mnt | awk 'BEGIN { FS = "/" }; { print $3 }' | sed "s/\[//")"
-    arch-chroot /mnt refind-install
-    echo '"Crystal Linux"          "rw root=/dev/placeholder rootflags=subvol=@"' > /mnt/boot/refind_linux.conf
-    sed -i "s/placeholder/$root/" /mnt/boot/refind_linux.conf
+    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
 else 
-    arch-chroot /mnt curl https://git.getcryst.al/crystal/Syslinux_install_script/raw/branch/master/syslinux-install_update -o /usr/bin/syslinux-install_update
-    arch-chroot /mnt syslinux-install_update -i -a -m
+    arch-chroot /mnt grub-install --target=i386-pc ${DISK}1
 fi
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
 
 arch-chroot /mnt systemctl enable NetworkManager
 arch-chroot pacman-key --init
