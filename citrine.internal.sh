@@ -377,7 +377,7 @@ arch-chroot su - ${UN} -c "mkdir -p /mnt/home/${UN}/.local/share/"
 while [[ "$DE" == "" ]]; do
     menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
     if [[ "$menu" == "Official" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Onyx" "Our custom Desktop Environment based on XFCE" "Onyx tiling" "Our custom Desktop Environment based on xfce but with i3 as the wm" --stdout)
+        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 "Onyx" "Our custom Desktop Environment based on XFCE"
     elif [[ "$menu" == "Third Party (supported)" ]]; then
         DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
     elif [[ "$menu" == "Third Party (unsupported)" ]]; then
@@ -392,17 +392,8 @@ while [[ "$DE" == "" ]]; do
         fi
     fi
     if [[ "$DE" == "Onyx" ]]; then
-        #arch-chroot /mnt pacman -S --quiet --noconfirm onyx
-        #DM="lightdm"
-        dumptitle="Desktop Environment"
-        dump "Onyx is not supported yet, please choose another DE"
-        DE=""
-    elif [[ "$DE" == "Onyx tiling" ]]; then
-        #arch-chroot /mnt pacman -S --quiet --noconfirm onyx-tiling
-        #DM="lightdm"
-        dumptitle="Desktop Environment"
-        dump "Onyx is not supported yet, please choose another DE"
-        DE=""
+        arch-chroot /mnt pacman -S --quiet --noconfirm onyx
+        DM="lightdm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
