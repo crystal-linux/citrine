@@ -1,7 +1,7 @@
 # Maintainer: Matt C <mdc028[at]bucknell[dot]edu>
 
 pkgname=citrine
-pkgver=3.2.3
+pkgver=3.2.4
 pkgrel=1
 pkgdesc="Crystal Linux Script for installing the system"
 arch=('any')
@@ -9,7 +9,8 @@ url="https://git.tar.black/crystal/programs/citrine"
 license=('custom')
 source=("citrine.sh" "citrine.internal.sh")
 depends=('arch-install-scripts' 'util-linux' 'parted' 'dialog' 'btrfs-progs' 'dosfstools')
-md5sums=('SKIP')
+md5sums=('c16f9c01d656886b905071cb5477d3e3'
+         'a2deb9b83adf9d727b7aaa67414f08df')
 
 package() {
     chmod +x *.sh

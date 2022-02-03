@@ -117,73 +117,39 @@ if [[ "$MANUAL" == "no" ]]; then
     if [[ "$EFI" == "yes" ]]; then
         parted ${DISK} mklabel gpt --script
         parted ${DISK} mkpart fat32 0 300 --script
-        parted ${DISK} mkpart btrfs 300 100% --script
+        parted ${DISK} mkpart ext4 300 100% --script
         inf "Partitioned ${DISK} as an EFI volume"
     else
         parted ${DISK} mklabel msdos --script
-        parted ${DISK} mkpart primary btrfs 512MIB 100% --script
-        parted ${DISK} mkpart primary ext4 1MIB 512MIB --script
+        parted ${DISK} mkpart ext4 300 100% --script
         inf "Partitioned ${DISK} as an MBR volume"
     fi
 
     if [[ "$NVME" == "yes" ]]; then
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as NVME EFI"
-            mkfs.vfat ${DISK}p1
-            mkfs.btrfs -f ${DISK}p2
+            mkfs.vfat -F32 ${DISK}p1
+            mkfs.ext4 ${DISK}p2
             mount ${DISK}p2 /mnt
-            cd /mnt
-            btrfs subvolume create @
-            btrfs subvolume create @home
-            cd /
-            umount /mnt
-            mount -o subvol=@ ${DISK}p2 /mnt
-            mkdir -p /mnt/{boot/efi,home}
-            mount -o subvol=@home ${DISK}p2 /mnt/home
+            mkdir -p /mnt/boot/efi
             mount ${DISK}p1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as NVME MBR"
-            mkfs.btrfs -f ${DISK}p1
+            mkfs.ext4 ${DISK}p1
             mount ${DISK}1 /mnt
-            cd /mnt
-            btrfs subvolume create @
-            btrfs subvolume create @home 
-            cd /
-            umount /mnt
-            mount -o noatime,subvol=@ ${DISK}p1 /mnt
-            mkdir -p /mnt/{home,boot}
-            mount -o noatime,subvol=@home ${DISK}p1 /mnt/home
-            mount ${DISK}p2 /mnt/boot
         fi
     else
         if [[ "$EFI" == "yes" ]]; then
             inf "Initializing ${DISK} as EFI"
             mkfs.vfat -F32 ${DISK}1
-            mkfs.btrfs -f ${DISK}2
+            mkfs.ext4 ${DISK}2
             mount ${DISK}2 /mnt
-            cd /mnt
-            btrfs subvolume create @
-            btrfs subvolume create @home
-            cd /
-            umount /mnt
-            mount -o subvol=@ ${DISK}2 /mnt
-            mkdir -p /mnt/{boot/efi,home}
-            mount -o subvol=@home ${DISK}2 /mnt/home
+            mkdir -p /mnt/boot/efi
             mount ${DISK}1 /mnt/boot/efi
         else
             inf "Initializing ${DISK} as MBR"
-            mkfs.btrfs -f ${DISK}1
-            mkfs.ext4 ${DISK}2
+            mkfs.ext4 ${DISK}1
             mount ${DISK}1 /mnt
-            cd /mnt
-            btrfs subvolume create @
-            btrfs subvolume create @home 
-            cd /
-            umount /mnt
-            mount -o noatime,subvol=@ ${DISK}1 /mnt
-            mkdir -p /mnt/{home,boot}
-            mount -o noatime,subvol=@home ${DISK}1 /mnt/home
-            mount ${DISK}2 /mnt/boot
         fi
     fi
 else
@@ -227,7 +193,7 @@ else
 fi
 
 inf "Verifying network connection"
-ping -c 1 ginp.archlinux.org
+ping -c 1 google.com
 
 if [[ ! "$?" == "0" ]]; then
     dumptitle="Error!"
@@ -238,10 +204,10 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs timeshift timeshift-autosnap which
+crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
 if [[ ! "$?" == "0" ]]; then
     inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch btrfs-progs timeshift timeshift-autosnap which
+    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
 fi
 
 if [[ "$EFI" == "yes" ]]; then
@@ -377,7 +343,7 @@ arch-chroot su - ${UN} -c "mkdir -p /mnt/home/${UN}/.local/share/"
 while [[ "$DE" == "" ]]; do
     menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
     if [[ "$menu" == "Official" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 "Onyx" "Our custom Desktop Environment based on XFCE"
+        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 "Onyx" "Our custom Desktop Environment based on Budgie"
     elif [[ "$menu" == "Third Party (supported)" ]]; then
         DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
     elif [[ "$menu" == "Third Party (unsupported)" ]]; then
@@ -402,7 +368,7 @@ while [[ "$DE" == "" ]]; do
         DM="sddm"
     elif [[ "$DE" == "budgie" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
-        DM="gdm"
+        DM="lightdm"
     elif [[ "$DE" == "Mate" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
         DM="gdm"
@@ -442,6 +408,9 @@ else
 fi
 
 if [[ "$DM" != "" ]]; then
+    if [[ "$DM" == "lightdm" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm lightdm-gtk-greeter
+    fi
     if [[ "$DM" != "none" ]]; then
         yesno "Would you like to enable ${DM} for ${DE}? (Y/n)"
         useDM="$yn"
