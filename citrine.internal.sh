@@ -448,7 +448,6 @@ if [[ "$flatpak" == "0" ]]; then
     dump "Adding the flathub remote likely failed. We're sorry we can't work around this. Ask in discord if you need help."
 fi
 
-dump "Installing bootloader"
 if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
 else 
