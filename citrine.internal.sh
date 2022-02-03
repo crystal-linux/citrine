@@ -172,6 +172,10 @@ else
         DISK="${msgdat}"
     fi
 
+    dumptitle="Suggestion"
+    dump "You could also use the graphical 'Disks' application. This will take care of everything except mounting, which you will\
+    still need to do within the shell."
+
     CONFDONE="NOPE"
     dumptitle="Citrine"
 
@@ -201,6 +205,8 @@ if [[ ! "$?" == "0" ]]; then
     umount -l /mnt
     exit 1
 fi
+
+ntpd -g -q
 
 inf "Setting up base Crystal System"
 
@@ -447,13 +453,13 @@ if [[ "$MP" != "1" ]]; then
         msgbox "Write package names"
         PKGNS="$msgdat"
         inf "Installing: $PKGNS"
-        arch-chroot /mnt su - ${UN} -c "ame -S ${PKGNS}"
+        arch-chroot /mnt su - ${UN} -c "ame ins ${PKGNS}"
     else 
         msgbox "URL to package list"
         SRC="$msgdat"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
-            arch-chroot /mnt su - ${UN} -c "ame -S ${PKG}"
+            arch-chroot /mnt su - ${UN} -c "ame ins ${PKG}"
         done
     fi
 fi
