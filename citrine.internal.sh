@@ -242,14 +242,15 @@ rm calamares
 DAT=$(cat out)
 rm out
 TZ="/usr/share/zoneinfo/${DAT}"
-
 ln -sf $TZ /etc/localtime
 ntpd -g -q
-
 arch-chroot /mnt ln -sf $TZ /etc/localtime
 inf "Set TZ to ${TZ}"
 inf "Syncing hardware offset"
 arch-chroot /mnt hwclock --systohc
+
+inf "press enter"
+read
 
 echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
