@@ -448,12 +448,19 @@ if [[ "$flatpak" == "0" ]]; then
     dump "Adding the flathub remote likely failed. We're sorry we can't work around this. Ask in discord if you need help."
 fi
 
+if [[ "$DE" != "Fig" ]]; then
+    arch-chroot /mnt pacman -S --quiet --noconfirm crystal-grub-theme
+    echo "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"" >> /mnt/etc/default/grub
+fi
+
 if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
 else 
     arch-chroot /mnt grub-install --target=i386-pc ${DISK}
 fi
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
+
 
 inf "Installation should now be complete."
 
