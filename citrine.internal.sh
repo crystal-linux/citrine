@@ -64,7 +64,7 @@ echo "PMODE=$yn"
 PMODE="$yn"
 
 dumptitle="System Disks"
-diskdat="$(fdisk -l | grep Disk | grep sectors --color=never)"
+diskdat="$(fdisk -l | grep Disk | grep sectors --color=never | grep -v loop)"
 dump "$diskdat"
 
 MANUAL="no"
@@ -344,8 +344,8 @@ arch-chroot pacman-key --populate crystal
 
 clear
 
+mkdir -p /mnt/etc/
 cp -v /etc/pacman.conf /mnt/etc/pacman/.
-read
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
@@ -447,24 +447,11 @@ if [[ "$flatpak" == "0" ]]; then
     dump "Adding the flathub remote likely failed. We're sorry we can't work around this. Ask in discord if you need help."
 fi
 
-yesno "Would you like to add more packages? (Y/n)"
-MP="$yn"
-if [[ "$MP" != "1" ]]; then
-    yesno "Would you like to use a URL to a package list? (Y/n)"
-    OL="$yn"
-    if [[ "$OL" == "1" ]]; then
-        msgbox "Write package names"
-        PKGNS="$msgdat"
-        inf "Installing: $PKGNS"
-       arch-chroot /mnt "pacman -S --quiet --noconfirm $PKGNS"
-    else 
-        msgbox "URL to package list"
-        SRC="$msgdat"
-        PKGS="$(curl ${SRC})"
-        for PKG in PKGS; do
-            arch-chroot /mnt pacman -S --quiet --noconfirm $PKG
-        done
-    fi
-fi
-
 inf "Installation should now be complete."
+
+yesno "Would you like to chroot into the new install to configure manually? (y/N)"
+CH="$yn"
+if [[ "$CH" = "0" ]]; then
+    inf "Use 'exit' when done."
+    arch-chroot /mnt
+fi
