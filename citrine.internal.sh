@@ -372,7 +372,6 @@ while [[ "$DE" == "" ]]; do
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
         arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme-git whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git grub-theme-whitesur-color-1080p-git kvantum-qt5 latte-dock
-        arch-chroot /mnt "git clone https://github.com/vinceliuice/grub2-themes && cd grub2-themes && ./install.sh -b -t whitesur"
         DM="sddm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
