@@ -364,7 +364,6 @@ while [[ "$DE" == "" ]]; do
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
         arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme-git whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git whitesur-grub-theme kvantum-qt5 latte-dock
-        echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\"" >> /mnt/etc/default/grub
         DM="sddm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
@@ -451,7 +450,12 @@ fi
 if [[ "$DE" != "Fig" ]]; then
     arch-chroot /mnt pacman -S --quiet --noconfirm crystal-grub-theme
     echo "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"" >> /mnt/etc/default/grub
+else
+    echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\"" >> /mnt/etc/default/grub
 fi
+
+grep GRUB_THEME /mnt/etc/default/grub
+read
 
 if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
