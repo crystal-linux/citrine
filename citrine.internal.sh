@@ -234,7 +234,7 @@ with open("calamares") as f:
     s = f.read()
 foo = json.loads(s)
 with open("out","w") as f:
-    f.write(foo['time_zone])
+    f.write(foo['time_zone'])
 EOF
 python extract.py
 rm extract.py

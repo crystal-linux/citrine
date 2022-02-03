@@ -1,5 +1,5 @@
 install:
-	pacman -Sy dialog --noconfirm --needed
+	pacman -Sy dialog python ntp wget --noconfirm --needed
 	chmod +x *.sh
 	cp *.sh /usr/bin
 	mv /usr/bin/citrine.sh /usr/bin/citrine
