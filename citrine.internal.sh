@@ -473,8 +473,10 @@ fi
 
 if [[ "$DE" != "Fig" ]]; then
     arch-chroot /mnt pacman -S --quiet --noconfirm crystal-grub-theme
+    echo >> /mnt/etc/default/grub
     echo "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"" >> /mnt/etc/default/grub
 else
+    echo >> /mnt/etc/default/grub
     echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\"" >> /mnt/etc/default/grub
 fi
 
