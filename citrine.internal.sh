@@ -206,8 +206,6 @@ if [[ ! "$?" == "0" ]]; then
     exit 1
 fi
 
-ntpd -g -q
-
 inf "Setting up base Crystal System"
 
 pacstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
@@ -228,18 +226,25 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 clear
 
-cd /usr/share/zoneinfo/
-var=$(echo */ | sed 's/\///g' | sed 's/ /" "" "/g')
-var=$(echo \"$var\")
-loc1=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var "" --stdout)
-loc1=$(echo $loc1 | sed 's/"//g')
-cd /usr/share/zoneinfo/$loc1
-var1=$(echo * | sed 's/\///g' | sed 's/ /" "" "/g')
-var1=$(echo \"$var1\")
-loc2=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var1 "" --stdout)
-loc2=$(echo $loc1 | sed 's/"//g')
-TZ="/usr/share/zoneinfo/$loc1/$loc2"
 cd /
+wget https://geoip.kde.org/v1/calamares
+cat >> extract.py << EOF
+import json
+with open("calamares") as f:
+    s = f.read()
+foo = json.loads(s)
+with open("out","w") as f:
+    f.write(foo['time_zone])
+EOF
+python extract.py
+rm extract.py
+rm calamares
+DAT=$(cat out)
+rm out
+TZ="/usr/share/zoneinfo/${DAT}"
+
+ln -sf $TZ /etc/localtime
+ntpd -g -q
 
 arch-chroot /mnt ln -sf $TZ /etc/localtime
 inf "Set TZ to ${TZ}"
