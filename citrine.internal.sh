@@ -345,8 +345,7 @@ arch-chroot /mnt pacman-key --populate crystal
 clear
 
 mkdir -p /mnt/etc/
-cp -v /etc/pacman.conf /mnt/etc/pacman/pacman.conf
-read
+cp -v /etc/pacman.conf /mnt/etc/pacman.conf
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
