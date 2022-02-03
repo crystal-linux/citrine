@@ -327,6 +327,7 @@ arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) $
 echo >> /mnt/etc/sudoers
 echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
+echo "Defaults pwfeedback" >> /mnt/etc/sudoers
 
 if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
@@ -343,7 +344,9 @@ arch-chroot pacman-key --populate crystal
 
 clear
 
-cp /etc/pacman.conf /mnt/etc/pacman/.
+cp -v /etc/pacman.conf /mnt/etc/pacman/.
+read
+
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
 while [[ "$DE" == "" ]]; do
@@ -453,13 +456,13 @@ if [[ "$MP" != "1" ]]; then
         msgbox "Write package names"
         PKGNS="$msgdat"
         inf "Installing: $PKGNS"
-        arch-chroot /mnt su - ${UN} -c "ame ins ${PKGNS}"
+       arch-chroot /mnt "pacman -S --quiet --noconfirm $PKGNS"
     else 
         msgbox "URL to package list"
         SRC="$msgdat"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
-            arch-chroot /mnt su - ${UN} -c "ame ins ${PKG}"
+            arch-chroot /mnt pacman -S --quiet --noconfirm $PKG
         done
     fi
 fi
