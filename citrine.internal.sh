@@ -373,6 +373,8 @@ while [[ "$DE" == "" ]]; do
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
         arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme-git whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git kvantum-qt5 latte-dock
         DM="sddm"
+        arch-chroot /mnt su - ${UN} -c "kvantummanager --set WhiteSurDark"
+        arch-chroot /mnt su - ${UN} -c "lookandfeeltool -a com.github.vinceliuice.WhiteSur-dark"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
