@@ -329,14 +329,6 @@ echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 echo "Defaults pwfeedback" >> /mnt/etc/sudoers
 
-if [[ "$EFI" == "yes" ]]; then
-    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
-else 
-    arch-chroot /mnt grub-install --target=i386-pc ${DISK}
-fi
-arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-
-
 arch-chroot /mnt systemctl enable NetworkManager
 arch-chroot /mnt pacman-key --init
 arch-chroot /mnt pacman-key --populate archlinux
@@ -371,7 +363,8 @@ while [[ "$DE" == "" ]]; do
         DM="lightdm"
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
-        arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme-git whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git grub-theme-whitesur-color-1080p-git kvantum-qt5 latte-dock
+        arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme-git whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git whitesur-grub-theme kvantum-qt5 latte-dock
+        echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\""
         DM="sddm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
@@ -454,6 +447,14 @@ if [[ "$flatpak" == "0" ]]; then
     dumptitle="Note"
     dump "Adding the flathub remote likely failed. We're sorry we can't work around this. Ask in discord if you need help."
 fi
+
+dump "Installing bootloader"
+if [[ "$EFI" == "yes" ]]; then
+    arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
+else 
+    arch-chroot /mnt grub-install --target=i386-pc ${DISK}
+fi
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 inf "Installation should now be complete."
 
