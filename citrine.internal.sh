@@ -261,7 +261,7 @@ arch-chroot /mnt locale-gen
 
 echo
 echo
-dumptitle "locale"
+dumptitle="locale"
 dump "en_US was set as system primary.\nAfter install, you can edit /etc/locale.conf to change the primary if desired."
 
 if [[ "$KBD" == "y" || "$KBD" == "Y" ]]; then
@@ -325,7 +325,7 @@ echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
 if [[ "$EFI" == "yes" ]]; then
     arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=crystal --removable
 else 
-    arch-chroot /mnt grub-install --target=i386-pc ${DISK}1
+    arch-chroot /mnt grub-install --target=i386-pc ${DISK}
 fi
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -337,8 +337,8 @@ arch-chroot pacman-key --populate crystal
 
 clear
 
+cp /etc/pacman.conf /mnt/etc/pacman/.
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
-arch-chroot su - ${UN} -c "mkdir -p /mnt/home/${UN}/.local/share/"
 
 while [[ "$DE" == "" ]]; do
     menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
@@ -434,6 +434,8 @@ if [[ "$flatpak" == "0" ]]; then
     fi
     arch-chroot /mnt pacman -S --quiet --noconfirm flatpak
     arch-chroot /mnt su - ${UN} -c "flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo"
+    dumptitle="Note"
+    dump "Adding the flathub remote likely failed. We're sorry we can't work around this. Ask in discord if you need help."
 fi
 
 yesno "Would you like to add more packages? (Y/n)"
@@ -442,13 +444,13 @@ if [[ "$MP" != "1" ]]; then
     yesno "Would you like to use a URL to a package list? (Y/n)"
     OL="$yn"
     if [[ "$OL" == "1" ]]; then
-        yesno "Write package names"
-        PKGNS="$yn"
+        msgbox "Write package names"
+        PKGNS="$msgdat"
         inf "Installing: $PKGNS"
         arch-chroot /mnt su - ${UN} -c "ame -S ${PKGNS}"
     else 
-        yesno "URL to package list"
-        SRC="$yn"
+        msgbox "URL to package list"
+        SRC="$msgdat"
         PKGS="$(curl ${SRC})"
         for PKG in PKGS; do
             arch-chroot /mnt su - ${UN} -c "ame -S ${PKG}"
