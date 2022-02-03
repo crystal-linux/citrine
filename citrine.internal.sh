@@ -242,15 +242,33 @@ rm calamares
 DAT=$(cat out)
 rm out
 TZ="/usr/share/zoneinfo/${DAT}"
-ln -sf $TZ /etc/localtime
-ntpd -g -q
-arch-chroot /mnt ln -sf $TZ /etc/localtime
-inf "Set TZ to ${TZ}"
-inf "Syncing hardware offset"
-arch-chroot /mnt hwclock --systohc
 
-inf "press enter"
-read
+if [[ ! -f $TZ ]]; then
+    cd /usr/share/zoneinfo/
+    var=$(echo */ | sed 's/\///g' | sed 's/ /" "" "/g')
+    var=$(echo \"$var\")
+    loc1=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var "" --stdout)
+    loc1=$(echo $loc1 | sed 's/"//g')
+    cd /usr/share/zoneinfo/$loc1
+    var1=$(echo * | sed 's/\///g' | sed 's/ /" "" "/g')
+    var1=$(echo \"$var1\")
+    loc2=$(dialog --title "Citrine" --menu "Please pick a time zone" 20 100 43 $var1 "" --stdout)
+    loc2=$(echo $loc1 | sed 's/"//g')
+    TZ="/usr/share/zoneinfo/$loc1/$loc2"
+    cd /
+
+    arch-chroot /mnt ln -sf $TZ /etc/localtime
+    inf "Set TZ to ${TZ}"
+    inf "Syncing hardware offset"
+    arch-chroot /mnt hwclock --systohc
+else
+    ln -sf $TZ /etc/localtime
+    ntpd -g -q
+    arch-chroot /mnt ln -sf $TZ /etc/localtime
+    inf "Set TZ to ${TZ}"
+    inf "Syncing hardware offset"
+    arch-chroot /mnt hwclock --systohc
+fi
 
 echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
@@ -365,7 +383,7 @@ while [[ "$DE" == "" ]]; do
         fi
     fi
     if [[ "$DE" == "Onyx" ]]; then
-        arch-chroot /mnt pacman -S --quiet --noconfirm onyx
+        arch-chroot /mnt pacman -S --quiet --noconfirm onyx xorg-server budgie-desktop gnome
         DM="lightdm"
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
