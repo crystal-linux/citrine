@@ -338,14 +338,14 @@ arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 
 arch-chroot /mnt systemctl enable NetworkManager
-arch-chroot pacman-key --init
-arch-chroot pacman-key --populate archlinux
-arch-chroot pacman-key --populate crystal
+arch-chroot /mnt pacman-key --init
+arch-chroot /mnt pacman-key --populate archlinux
+arch-chroot /mnt pacman-key --populate crystal
 
 clear
 
 mkdir -p /mnt/etc/
-cp -v /etc/pacman.conf /mnt/etc/pacman/.
+cp -v /etc/pacman.conf /mnt/etc/pacman/pacman.conf
 read
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
@@ -357,7 +357,7 @@ while [[ "$DE" == "" ]]; do
     elif [[ "$menu" == "Third Party (supported)" ]]; then
         DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
     elif [[ "$menu" == "Third Party (unsupported)" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 2 "Pantheon" "The Pantheon desktop environment from elementaryos" "Enlightenment" "A very DIY desktop environment, refer to archwiki" --stdout)
+        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 1 "Enlightenment" "A very DIY desktop environment, refer to archwiki" --stdout)
     elif [[ "$menu" == "None/DIY" ]]; then
         yesno "Are you sure that you dont want to install any DE?"
         if [[ "$yn" == "0" ]]; then
@@ -386,9 +386,6 @@ while [[ "$DE" == "" ]]; do
     elif [[ "$DE" == "Mate" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm mate mate-extra mate-applet-dock mate-applet-streamer
         DM="gdm"
-    elif [[ "$DE" == "Pantheon" ]]; then
-        arch-chroot /mnt su - ${UN} -c "ame -S gala wingpanel pantheon-applications-menu plank pantheon-geoclue2-agent pantheon-polkit-agent pantheon-print pantheon-settings-daemon lightdm lightdm-pantheon-greeter pantheon-default-settings elementary-icon-theme elementary-wallpapers gtk-theme-elementary ttf-droid ttf-opensans ttf-roboto sound-theme-elementary capnet-assist epiphany pantheon-calculator pantheon-calendar pantheon-camera pantheon-code pantheon-files pantheon-mail pantheon-music pantheon-photos pantheon-screencast pantheon-shortcut-overlay pantheon-terminal pantheon-videos simple-scan pantheon-session pantheon switchboard-plugin-desktop" > /mnt/pantheon-packages.txt
-        DM="lightdm"
     elif [[ "$DE" == "Enlightenment" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm enlightenment terminology
     elif [[ "$DE" == "Xfce" ]]; then
