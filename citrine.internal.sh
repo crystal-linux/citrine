@@ -364,7 +364,7 @@ while [[ "$DE" == "" ]]; do
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
         arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme-git whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git whitesur-grub-theme kvantum-qt5 latte-dock
-        echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\""
+        echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\"" >> /etc/default/grub
         DM="sddm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
