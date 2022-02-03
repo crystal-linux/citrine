@@ -346,6 +346,7 @@ clear
 
 mkdir -p /mnt/etc/
 cp -v /etc/pacman.conf /mnt/etc/pacman/.
+read
 
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
@@ -370,7 +371,8 @@ while [[ "$DE" == "" ]]; do
         arch-chroot /mnt pacman -S --quiet --noconfirm onyx
         DM="lightdm"
     elif [[ "$DE" == "Fig" ]]; then
-        arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm whitesur-kde-theme whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git latte-dock
+        arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
+        arch-chroot /mnt pacman -Sy --quiet --noconfirm whitesur-kde-theme whitesur-icon-theme-git whitesur-cursor-theme-git whitesur-gtk-theme-git latte-dock
         DM="sddm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
