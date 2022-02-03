@@ -343,7 +343,7 @@ arch-chroot su - ${UN} -c "mkdir -p /mnt/home/${UN}/.local/share/"
 while [[ "$DE" == "" ]]; do
     menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
     if [[ "$menu" == "Official" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 "Onyx" "Our custom Desktop Environment based on Budgie"
+        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 "Onyx" "Our custom Desktop Environment based on Budgie")
     elif [[ "$menu" == "Third Party (supported)" ]]; then
         DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
     elif [[ "$menu" == "Third Party (unsupported)" ]]; then
