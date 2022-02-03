@@ -116,12 +116,12 @@ if [[ "$MANUAL" == "no" ]]; then
     echo "Partitioning disk"
     if [[ "$EFI" == "yes" ]]; then
         parted ${DISK} mklabel gpt --script
-        parted ${DISK} mkpart fat32 0 300 --script
-        parted ${DISK} mkpart ext4 300 100% --script
+        parted ${DISK} mkpart 0 300 --script
+        parted ${DISK} mkpart 300 100% --script
         inf "Partitioned ${DISK} as an EFI volume"
     else
         parted ${DISK} mklabel msdos --script
-        parted ${DISK} mkpart ext4 300 100% --script
+        parted ${DISK} mkpart 0 100% --script
         inf "Partitioned ${DISK} as an MBR volume"
     fi
 
@@ -204,18 +204,18 @@ fi
 
 inf "Setting up base Crystal System"
 
-crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
+pacstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
 if [[ ! "$?" == "0" ]]; then
-    inf "CrystalStrap had some error. Retrying."
-    crystalstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
+    inf "pacstrap had some error. Retrying."
+    pacstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
 fi
 
 if [[ "$EFI" == "yes" ]]; then
     inf "Installing EFI support packages"
-    crystalstrap /mnt efibootmgr grub
+    pacstrap /mnt efibootmgr grub
 else 
     inf "Installing Syslinux bootloader"
-    crystalstrap /mnt grub
+    pacstrap /mnt grub
 fi
 
 genfstab -U /mnt > /mnt/etc/fstab
@@ -455,8 +455,5 @@ if [[ "$MP" != "1" ]]; then
         done
     fi
 fi
-
-inf "setting up timeshift"
-arch-chroot /mnt timeshift --btrfs
 
 inf "Installation should now be complete."
