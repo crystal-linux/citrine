@@ -430,6 +430,13 @@ if [[ "$DM" != "" ]]; then
     fi
 fi
 
+if [[ "$DE" != "none" ]]; then
+    yesno "Would you like to install Firefox to go with ${DE}?"
+    if [[ "$yn" == "0" ]]; then
+        arch-chroot /mnt pacman -S --quiet --noconfirm firefox
+    fi
+fi
+
 yesno "Would you like to install flatpak?"
 flatpak="$yn"
 if [[ "$flatpak" == "0" ]]; then
