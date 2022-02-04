@@ -384,8 +384,19 @@ while [[ "$DE" == "" ]]; do
     fi
     if [[ "$DE" == "Onyx" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm onyx xorg-server budgie-desktop gnome
-        arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\""
-        arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\""
+
+        # This didn't work :C
+        #arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\""
+        #arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\""
+
+        mkdir -p /mnt/etc/skel/
+        echo "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\"" >> /mnt/etc/skel/.xsession
+        echo "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\"" >> /mnt/etc/skel/.xsession
+
+        # homedir of user that exists will also already exist
+        echo "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\"" >> /mnt/home/${UN}/.xsession
+        echo "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\"" >> /mnt/home/${UN}/.xsession
+
         DM="lightdm"
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
