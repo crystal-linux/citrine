@@ -384,6 +384,8 @@ while [[ "$DE" == "" ]]; do
     fi
     if [[ "$DE" == "Onyx" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm onyx xorg-server budgie-desktop gnome
+        arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\""
+        arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\""
         DM="lightdm"
     elif [[ "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm 
