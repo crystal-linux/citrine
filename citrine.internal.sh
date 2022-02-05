@@ -116,7 +116,7 @@ if [[ "$MANUAL" == "no" ]]; then
     echo "Partitioning disk"
     if [[ "$EFI" == "yes" ]]; then
         parted ${DISK} 'mklabel gpt' --script
-        parted ${DISK} 'mkpart primary vfat 0 300' --script
+        parted ${DISK} 'mkpart primary fat 0 300' --script
         parted ${DISK} 'mkpart primary ext4 300 100%' --script
         inf "Partitioned ${DISK} as an EFI volume"
     else
