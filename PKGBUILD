@@ -1,7 +1,7 @@
 # Maintainer: Matt C <mdc028[at]bucknell[dot]edu>
 
 pkgname=citrine
-pkgver=3.3.1
+pkgver=3.3.2
 pkgrel=1
 pkgdesc="Crystal Linux Script for installing the system"
 arch=('any')
