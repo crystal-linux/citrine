@@ -196,6 +196,11 @@ else
     done
 fi
 
+if ! findmnt | grep /mnt; then
+    err "Seems like no partitions are mounted."
+    exit 1
+fi
+
 inf "Verifying network connection"
 ping -c 1 google.com
 
