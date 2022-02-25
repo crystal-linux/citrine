@@ -443,7 +443,7 @@ if [[ "$DE" != "Fig" ]]; then
     echo >> /mnt/etc/default/grub
     echo "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"" >> /mnt/etc/default/grub
 else
-    arch-chroot /mnt pacman -S --quiet --noconfirm crystal-grub-theme fig-configs
+    arch-chroot /mnt pacman -S --quiet --noconfirm whitesur-grub-theme fig-configs
     echo >> /mnt/etc/default/grub
     echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\"" >> /mnt/etc/default/grub
 fi
