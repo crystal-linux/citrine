@@ -318,45 +318,6 @@ fi
 echo "127.0.0.1     ${HOSTNAME}.localdomain ${HOSTNAME}" >> /mnt/etc/hosts
 
 clear
-inf "Set a password for root"
-done="nope"
-while [[ "$done" == "nope" ]]; do
-    passbox "Please enter root password"
-    passInit="$pass"
-    passbox "Please confirm root password"
-    passConf="$pass"
-    if [[ "$passInit" == "$passConf" ]]; then
-        done="yep"
-    else 
-        dumptitle "Password error"
-        dump "Passwords do not match. Please try again."
-    fi
-done
-arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) ${UN}
-
-msgbox "Your username"
-UN="$msgdat"
-arch-chroot /mnt useradd -m -G wheel -s /bin/bash ${UN}
-inf "Set password for ${UN}"
-done="nope"
-while [[ "$done" == "nope" ]]; do
-    passbox "Please enter password for ${UN}"
-    passInit="$pass"
-    passbox "Please confirm password for ${UN}"
-    passConf="$pass"
-    if [[ "$passInit" == "$passConf" ]]; then
-        done="yep"
-    else 
-        dumptitle "Password error"
-        dump "Passwords do not match. Please try again."
-    fi
-done
-arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) ${UN}
-
-echo >> /mnt/etc/sudoers
-echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
-echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
-echo "Defaults pwfeedback" >> /mnt/etc/sudoers
 
 arch-chroot /mnt systemctl enable NetworkManager
 arch-chroot /mnt pacman-key --init
@@ -501,7 +462,45 @@ else
 fi
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
+inf "Set a password for root"
+done="nope"
+while [[ "$done" == "nope" ]]; do
+    passbox "Please enter root password"
+    passInit="$pass"
+    passbox "Please confirm root password"
+    passConf="$pass"
+    if [[ "$passInit" == "$passConf" ]]; then
+        done="yep"
+    else 
+        dumptitle "Password error"
+        dump "Passwords do not match. Please try again."
+    fi
+done
+arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) ${UN}
 
+msgbox "Your username"
+UN="$msgdat"
+arch-chroot /mnt useradd -m -G wheel -s /bin/bash ${UN}
+inf "Set password for ${UN}"
+done="nope"
+while [[ "$done" == "nope" ]]; do
+    passbox "Please enter password for ${UN}"
+    passInit="$pass"
+    passbox "Please confirm password for ${UN}"
+    passConf="$pass"
+    if [[ "$passInit" == "$passConf" ]]; then
+        done="yep"
+    else 
+        dumptitle "Password error"
+        dump "Passwords do not match. Please try again."
+    fi
+done
+arch-chroot /mnt usermod --password $(echo ${pass} | openssl passwd -1 -stdin) ${UN}
+
+echo >> /mnt/etc/sudoers
+echo "# Enabled by Crystalinstall (citrine)" >> /mnt/etc/sudoers
+echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
+echo "Defaults pwfeedback" >> /mnt/etc/sudoers
 
 inf "Installation should now be complete."
 
