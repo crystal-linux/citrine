@@ -332,42 +332,38 @@ cp -v /etc/pacman.conf /mnt/etc/pacman.conf
 arch-chroot /mnt pacman -Sy --quiet --noconfirm
 
 while [[ "$DE" == "" ]]; do
-    menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
-    if [[ "$menu" == "Official" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 1 "Onyx" "Our custom Desktop Environment based on Budgie" --stdout)
-    elif [[ "$menu" == "Third Party (supported)" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
-    elif [[ "$menu" == "Third Party (unsupported)" ]]; then
-        DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 1 "Enlightenment" "A very DIY desktop environment, refer to archwiki" --stdout)
-    elif [[ "$menu" == "None/DIY" ]]; then
-        yesno "Are you sure that you dont want to install any DE?"
-        if [[ "$yn" == "0" ]]; then
-            DE="none"
-            DM="none"
-        else
-            DE=""
+    if [[ ! -f /etc/fig ]]; then
+        menu=$(dialog --title "Citrine" --menu "Select the Desktop Environment you want to install" 12 100 4 "Official" "Our pre-themed desktop environments" "Third Party (supported)" "Third party Desktop Environments that are supported" "Third Party (unsupported)" "Third Party Desktop Environments that aren't supported" "None/DIY" "Install no de from this list" --stdout)
+        if [[ "$menu" == "Official" ]]; then
+            DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 1 "Onyx" "Our custom Desktop Environment based on Budgie" --stdout)
+        elif [[ "$menu" == "Third Party (supported)" ]]; then
+            DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 5 "Gnome" "The Gnome desktop environment" "KDE" "The KDE desktop environment" "Xfce" "The xfce desktop environment" "budgie" "The budgie desktop environment" "Mate" "The Mate desktop environment" --stdout)
+        elif [[ "$menu" == "Third Party (unsupported)" ]]; then
+            DE=$(dialog --title "Citrine" --menu "Please choose the DE you want to install" 12 100 1 "Enlightenment" "A very DIY desktop environment, refer to archwiki" --stdout)
+        elif [[ "$menu" == "None/DIY" ]]; then
+            yesno "Are you sure that you dont want to install any DE?"
+            if [[ "$yn" == "0" ]]; then
+                DE="none"
+                DM="none"
+            else
+                DE=""
+            fi
         fi
+    else
+        DE="Fig"
     fi
     if [[ "$DE" == "Onyx" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm onyx xorg-server budgie-desktop gnome
-
-        # This didn't work :C
-        #arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\""
-        #arch-chroot /mnt su - ${UN} -c "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\""
 
         mkdir -p /mnt/etc/skel/
         echo "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\"" >> /mnt/etc/skel/.xsession
         echo "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\"" >> /mnt/etc/skel/.xsession
 
-        # homedir of user that exists will also already exist
-        echo "gsettings set org.gnome.desktop.interface gtk-theme \"crystal-obsidian\"" >> /mnt/home/${UN}/.xsession
-        echo "gsettings set org.gnome.desktop.interface icon-theme \"crystal-obsidian-icons\"" >> /mnt/home/${UN}/.xsession
-
         DM="lightdm"
     elif [[ "$DE" == "Gnome" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
-    elif [[ "$DE" == "KDE" ]]; then
+    elif [[ "$DE" == "KDE" || "$DE" == "Fig" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
         DM="sddm"
     elif [[ "$DE" == "budgie" ]]; then
@@ -413,11 +409,7 @@ if [[ "$DM" != "" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm lightdm-gtk-greeter
     fi
     if [[ "$DM" != "none" ]]; then
-        yesno "Would you like to enable ${DM} for ${DE}? (Y/n)"
-        useDM="$yn"
-        if [[ "$useDM" != "1" ]]; then
-            arch-chroot /mnt systemctl enable ${DM}
-        fi
+        arch-chroot /mnt systemctl enable ${DM}
     fi
 fi
 
@@ -451,6 +443,7 @@ if [[ "$DE" != "Fig" ]]; then
     echo >> /mnt/etc/default/grub
     echo "GRUB_THEME=\"/usr/share/grub/themes/crystal/theme.txt\"" >> /mnt/etc/default/grub
 else
+    arch-chroot /mnt pacman -S --quiet --noconfirm crystal-grub-theme fig-configs
     echo >> /mnt/etc/default/grub
     echo "GRUB_THEME=\"/usr/share/grub/themes/bigsur/theme.txt\"" >> /mnt/etc/default/grub
 fi
