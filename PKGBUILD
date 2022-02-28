@@ -1,4 +1,4 @@
-# Maintainer: Matt C <mdc028[at]bucknell[dot]edu>
+# Maintainer: echo -n 'bWF0dEBnZXRjcnlzdC5hbA==' | base64 --decode
 
 pkgname=citrine
 pkgver=3.4.5
