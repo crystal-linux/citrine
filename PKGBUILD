@@ -1,7 +1,7 @@
 # Maintainer: echo -n 'bWF0dEBnZXRjcnlzdC5hbA==' | base64 --decode
 
 pkgname=citrine
-pkgver=3.4.6
+pkgver=3.4.7
 pkgrel=1
 pkgdesc="Crystal Linux Script for installing the system"
 arch=('any')
