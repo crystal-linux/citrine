@@ -10,7 +10,7 @@ license=('custom')
 source=("citrine.sh" "citrine.internal.sh")
 depends=('arch-install-scripts' 'util-linux' 'parted' 'dialog' 'dosfstools' 'ntp' 'python' 'wget')
 md5sums=('c16f9c01d656886b905071cb5477d3e3'
-         '7791c00338bc02682538b696343f2e39')
+         'f518d2362ca2e879e9ebcd4ca4a75eb5')
 
 package() {
     chmod +x *.sh
