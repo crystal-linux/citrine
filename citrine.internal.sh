@@ -213,10 +213,10 @@ fi
 
 inf "Setting up base Crystal System"
 
-pacstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
+pacstrap /mnt base linux linux-firmware systemd systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
 if [[ ! "$?" == "0" ]]; then
     inf "pacstrap had some error. Retrying."
-    pacstrap /mnt base linux linux-firmware systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
+    pacstrap /mnt base linux linux-firmware systemd systemd-sysvcompat networkmanager man-db man-pages texinfo micro sudo curl archlinux-keyring neofetch which
 fi
 
 if [[ "$EFI" == "yes" ]]; then
