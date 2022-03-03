@@ -81,6 +81,9 @@ while [[ "$DONE" == "no" ]]; do
     DISK="$msgdat"
     if fdisk -l ${DISK}; then
         DONE="yes"
+    else
+        dumptitle="Error"
+        dump "${DISK} doesn't seem to be a valid disk."
     fi
 done
 
