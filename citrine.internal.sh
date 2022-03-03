@@ -63,24 +63,28 @@ yesno "Would you like to partition manually?"
 echo "PMODE=$yn"
 PMODE="$yn"
 
-dumptitle="System Disks"
-diskdat="$(fdisk -l | grep Disk | grep sectors --color=never | grep -v loop)"
-dump "$diskdat"
-
-MANUAL="no"
-DISK=""
 if [[ "$PMODE" == "0" ]]; then
     MANUAL="yes"
-else
+fi
+
+DONE="no"
+
+while [[ "$DONE" == "no" ]]; do
+    dumptitle="System Disks"
+    diskdat="$(fdisk -l | grep Disk | grep sectors --color=never | grep -v loop)"
+    dump "$diskdat"
+
+    MANUAL="no"
+    DISK=""
     msgbox "Install target WILL BE FULLY WIPED"
     echo "DISK=$msgdat"
     DISK="$msgdat"
-    if ! fdisk -l ${DISK}; then
-        dumptitle="ERROR"
-        dump "Seems like $DISK doesn't exist. Did you typo?"
-        exit 1
+    if fdisk -l ${DISK}; then
+        DONE="yes"
     fi
-fi
+done
+
+
 
 if [[ $DISK == *"nvme"* ]]; then
     inf "Seems like this is an NVME disk. Noting"
