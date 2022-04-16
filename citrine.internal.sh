@@ -371,7 +371,7 @@ while [[ "$DE" == "" ]]; do
         arch-chroot /mnt pacman -S --quiet --noconfirm gnome gnome-extra chrome-gnome-shell
         DM="gdm"
     elif [[ "$DE" == "KDE" || "$DE" == "Fig" ]]; then
-        arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-applications sddm
+        arch-chroot /mnt pacman -S --quiet --noconfirm plasma kde-system kde-utilities sddm
         DM="sddm"
     elif [[ "$DE" == "budgie" ]]; then
         arch-chroot /mnt pacman -S --quiet --noconfirm budgie-desktop gnome
