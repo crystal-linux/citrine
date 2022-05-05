@@ -11,6 +11,8 @@
 <p align="center"> Command line Crystal Linux installer </p>
 
 
+![funny.png](./funny.png)
+
 ## Usage:
 As long as it's installed with Pacman, run with `citrine`
 
