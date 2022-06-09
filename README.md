@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/crystal-linux">
-    <img src="https://git.getcryst.al/crystal/branding/raw/branch/main/icons/crystal-logo-minimal-citrine.png" alt="Logo" width="150" height="150">
+    <img src="https://raw.githubusercontent.com/crystal-linux/branding/main/logos/crystal-logo-minimal.png" alt="Logo" width="150" height="150">
   </a>
 </p>
 <p align="center"> 
