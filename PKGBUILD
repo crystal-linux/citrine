@@ -4,6 +4,7 @@ pkgname=citrine
 pkgver=3.4.7
 pkgrel=1
 pkgdesc="Crystal Linux Script for installing the system"
+license=('GPL3')
 arch=('any')
 url="https://git.tar.black/crystal/programs/citrine"
 license=('custom')
